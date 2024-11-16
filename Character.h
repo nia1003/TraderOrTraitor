@@ -7,7 +7,8 @@ using namespace std;
 class Character{
 protected:
     string name;
-    int initCurrency;
+    int initCurrencyBonus;
+    int totalAsset;
 };
 
 #endif // CHARACTER_H

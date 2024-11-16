@@ -7,6 +7,7 @@ using namespace std;
 class Character{
 protected:
     string name;
+    int initCurrency;
 };
 
 #endif // CHARACTER_H

@@ -8,6 +8,7 @@ using namespace std;
 
 class Character{
 protected:
+    static int initMoney;
     // 身分相關
     short id;
     string identity; // 或直接用數字表示身分
@@ -20,10 +21,13 @@ protected:
     vector<Stock> stocks;
 
 public:
+    // get 
+    Character() {}
     int getCurrentMoney();
     string getName();
-    // get identity
+    // get identity()
     string getDesciption();
+
     int getTotalAsset(); // currentMoney + Σ(s.num * s.price) for s in stocks
 };
 

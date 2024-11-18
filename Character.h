@@ -3,7 +3,8 @@
 
 #include <string>
 #include <vector>
-#include <Stock.h>
+// #include <Stock.h>
+class Stock{};
 using namespace std;
 
 class Character{

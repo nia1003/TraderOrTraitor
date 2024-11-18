@@ -43,7 +43,7 @@ int Character::initMoney = 10000; // 暫定，全角色共享同樣的值
 
 // 散戶(玩家主要操作角色)
 class Retail : public Character{
-public:
+private:
     static string identity;
 };
 

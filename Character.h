@@ -9,8 +9,8 @@ using namespace std;
 
 class Character{
 protected:
-    static int initMoney;
-    static string identity; // e.g. 散戶、富二代
+    static const int INIT_MONEY;
+    // static const string IDENTITY; // e.g. 散戶、富二代
     // 身分相關
     short id; // served as key
     string name;
@@ -20,7 +20,7 @@ protected:
     // 功能相關
     int initBonus; // 可能設計成高基礎值多少
     int currentMoney;
-    vector<Stock> stocks;
+    vector<Stock*> stocks;
     vector<string> tradeLog; // 交易紀錄
 
 public:
@@ -39,14 +39,14 @@ public:
     string seeOthersInfo(const T& characterId); // 展示角色資訊
 };
 
-int Character::initMoney = 10000; // 暫定，全角色共享同樣的值
+const int Character::INIT_MONEY = 10000; // 暫定，全角色共享同樣的值
 
 // 散戶(玩家主要操作角色)
 class Retail : public Character{
 private:
-    static string identity;
+    static const string IDENTITY;
 };
 
-string Retail::identity = "散戶";
+const string Retail::IDENTITY = "??????";
 
 #endif // CHARACTER_H

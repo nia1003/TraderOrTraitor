@@ -1,7 +1,27 @@
-#include "Market.h"
 #include <cstdlib>
+#include <vector>
 #include <ctime>
+#include <string>
 
+class Stock {
+public:
+    Stock(const std::string& name, double price);
+    void updatePrice();
+
+    std::string name;
+    double price;
+private:
+    std::vector<Stock> stocks;
+};
+
+class Market {
+public:
+    Market();
+    void updateMarket();
+    Stock* findStock(const std::string& name);
+private:
+    std::vector<Stock> stocks;
+};
 
 Stock::Stock(const std::string& name, double price)
     : name(name), price(price) {}

@@ -5,11 +5,16 @@
 
 int main()
 {
+    std::cout << "開始創建遊戲..." << std::endl;
     // 創建 SFML 視窗
-    sf::RenderWindow window(sf::VideoMode(800, 600), "Trader or Trailor??");
+    sf::RenderWindow window(sf::VideoMode(800, 600), "Welcome to game: Trader or Trailor");
+    sf::CircleShape shape(100.f);
+    sf::Texture texture;
 
     // 創建遊戲和 UI 物件
-    Game game;
+    Game gameLevel1;
+    Game gameLevel2;
+    Game gameLevel3;
     UI ui;
 
     // 主遊戲循環

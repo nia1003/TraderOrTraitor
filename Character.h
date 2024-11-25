@@ -4,8 +4,20 @@
 #include <string>
 #include <vector>
 // #include <Stock.h>
-class Stock{};
 using namespace std;
+
+struct Stock{
+    // for testing
+    string name;
+    int price;
+};
+
+struct Asset {
+    int number;
+    Stock* stock;
+    Asset(int n, Stock* s) : number(n), stock(s) {}
+    int getValue() const { return number * stock->price; }
+};
 
 class Character {
 protected:
@@ -15,45 +27,54 @@ protected:
     short id; // served as key
     string name;
     string description;
-    string info; // 展示currentMoney、stocks等資訊
 
     // 功能相關
-    int initBonus; // 設計成高基礎值多少
+    // int initBonus; // 設計成高基礎值多少
     int currentMoney;
     int tradeCntInRound; // 一回合最多可做幾次交易
-    vector<Stock*> stocks;
-    vector<string> tradeLog; // 交易紀錄：f"{stockName} X {tradeNumber}"
+    vector<Asset> assets;
+    vector<Asset> tradeLog; // 交易紀錄
 
 public:
     // 角色創建相關
-    Character() {}
+    Character(const string& n, const string& des);
     static void resetCurrentId() { Character::currentId = 0; }
     
     // getters
-    int getCurrentMoney() const;
-    const string& getName() const;
-    const string& getDesciption() const;
+    // int getCurrentMoney() const { return this->currentMoney; };
+    // const string& getName() const { return this->name; };
+    // const string& getDesciption() const { return this->description; };
 
     // 遊戲背後邏輯相關(輔助遊戲進行)
-    void setTradeCntId(int cnt) {  }
+    int getTotalAsset() const; // currentMoney + Σ(s.num * s.price) for s in stocks
+    void setTradeCntId(int cnt) { this->tradeCntInRound = cnt; }
+    virtual void performOperations() = 0; // 實現各自的操作策略
 
     // 遊戲操作相關(玩家有對應操作)
-    int getTotalAsset() const; // currentMoney + Σ(s.num * s.price) for s in stocks
-    void tradeStocks(int stockId, int number); // number大於0表示買入，小於0表示賣出
-    const string& seeOthersInfo(int characterId); // 展示角色資訊
-};
+    virtual string showIntroduction() const; // 展示身分、名字、介紹
+    string showFinancialStatus() const; // 展示currentMoney、stocks
+    string seeTradeLog() const;
 
-const int Character::INIT_MONEY = 10000; // 暫定，全角色共享同樣的值
-int Character::currentId = 0;
+    // testing
+    void addAsset(const Asset& a) { assets.push_back(a); }
+};
 
 // 散戶(玩家主要操作角色)
 class Retail : public Character {
 private:
-    
+    static const short INIT_BONUS_RANGE[2]; // 設計成高基礎值多少(隨機值)
 public:
+    Retail(const string& n, const string& des);
     static const string IDENTITY;
+    const string& seeOthersInfo(int characterId); // 查看自己或對手的資訊
+    void tradeStocks(int stockId, int number); // number大於0表示買入，小於0表示賣出
+    string showIntroduction() const override;
+
+    void performOperations() override {} // temp
 };
 
-const string Retail::IDENTITY = "散戶";
+class Robot : public Character {
+protected:
+};
 
 #endif // CHARACTER_H

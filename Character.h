@@ -3,20 +3,15 @@
 
 #include <string>
 #include <vector>
-// #include <Stock.h>
+#include <array>
+#include "Stock.h"
 using namespace std;
-
-struct Stock{
-    // for testing
-    string name;
-    int price;
-};
 
 struct Asset {
     int number;
     Stock* stock;
     Asset(int n, Stock* s) : number(n), stock(s) {}
-    int getValue() const { return number * stock->price; }
+    int getValue() const { return number * stock->getCurrentPrice(); }
 };
 
 class Character {
@@ -59,12 +54,17 @@ public:
     void addAsset(const Asset& a) { assets.push_back(a); }
 };
 
-// 散戶(玩家主要操作角色)
-class Retail : public Character {
+/*
+    散戶：資金加成{0, 500}, 操作次數調整：0
+*/
+class Player : public Character {
 private:
-    static const short INIT_BONUS_RANGE[2]; // 設計成高基礎值多少(隨機值)
+    const array<short, 2> initBonusRange; // 設計成高基礎值多少(隨機值)
+    int tradeCntAdjust;
 public:
-    Retail(const string& n, const string& des);
+    const string identity;
+
+    Player(const string& iden, const array<short, 2>& range, int cntAdjust,  const string& n, const string& des);
     static const string IDENTITY;
     const string& seeOthersInfo(int characterId); // 查看自己或對手的資訊
     void tradeStocks(int stockId, int number); // number大於0表示買入，小於0表示賣出
@@ -72,6 +72,11 @@ public:
 
     void performOperations() override {} // temp
 };
+
+/*
+    直接用Player類別做出散戶、富二代等玩家等類別，
+    假設兩者只差在初始資金(富二代多)和操作次數(散戶多)
+*/
 
 class Robot : public Character {
 protected:

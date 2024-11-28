@@ -3,7 +3,8 @@
 
 #include "Character.h"
 #include <unordered_map>
-using namespace std;/*
+using namespace std;
+/*
     section1: show events
     section2: players trade (and finance, release news)
     section3: show results after the operaions

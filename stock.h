@@ -8,17 +8,22 @@ using namespace std;
 
 class Stock{
 private:
-    int stockID; // 股票的代碼
+    string ticker; // 股票的代碼
     string name; // 股票名稱
     string industry; // 產業類別
     int current_price; // 當前價格 = 原始價格 * 事件敏感度 * 事件影響力 * 影響權重
     string description; // 股票描述
-    double sensitivity; // 事件敏感度
+    double sensitivity;
+    /*
+        事件敏感度，0.0 < x <= 2.0
+        1以上代表偏敏感
+        1以下代表受事件影響的範圍有限，大型股的特質
+    */
     vector<double> priceHistory; // 股票的歷史價格數據，回合結束時更新
 
 public:
-    Stock(int id, const string& name, const string& ind, int price, const string& des, double sen) : 
-    stockID(id), name(name), industry(ind), current_price(price), description(des), sensitivity(sen), priceHistory(0) {;}
+    Stock(string ticker, const string& name, const string& ind, int price, const string& des, double sen) : 
+    ticker(ticker), name(name), industry(ind), current_price(price), description(des), sensitivity(sen), priceHistory(0) {;}
 
     // ~Stock();
 
@@ -42,7 +47,7 @@ void Stock::printStockInfo() const
 {
     cout << "股票資訊:" << endl;
     cout << "------------------" << endl;
-    cout << "股票ID: " << stockID << endl;
+    cout << "股票ID: " << ticker << endl;
     cout << "股票名稱: " << name << endl;
     cout << "產業類別: " << industry << endl;
     cout << "目前價格: $" << current_price << endl;

@@ -3,6 +3,7 @@
 
 #include "Character.h"
 #include <unordered_map>
+#include <vector>
 using namespace std;
 /*
     section1: show events
@@ -11,14 +12,15 @@ using namespace std;
 */
 
 class Round {
-private: // for testing
+private:
+    
 public:
 
 };
 
 class Stage {
 private:
-    unordered_map<int, Character*> characters;
+    vector<Character*> characters;
 };
 
 #endif

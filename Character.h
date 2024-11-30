@@ -19,7 +19,7 @@ protected:
     static const int INIT_MONEY; // 基礎值
     static int currentId; // 模仿SQL的AUTO_INCREMENT
     // 身分相關
-    short id; // served as key
+    short id; // served as key in Stage's characters array
     string name;
     string description;
 

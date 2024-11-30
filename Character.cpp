@@ -1,7 +1,6 @@
 #include <iostream>
 #include <sstream>
-#include <random>
-#include <chrono>
+#include "RandomInt.h"
 #include "Character.h"
 using namespace std;
 
@@ -43,19 +42,6 @@ string Character::showFinancialStatus() const {
             info << "    " << assets[i].stock->getName() << " X " << assets[i].number << "\n";
     }
     return info.str();
-}
-
-// 隨機整數生成函數
-int randomInt(const array<short, 2>& range) {
-    // 初始化隨機數引擎
-    static auto seed = std::chrono::system_clock::now().time_since_epoch().count();   // 用於生成種子
-    static std::mt19937 gen(seed); // 隨機數引擎（全局初始化以避免重複構造）
-
-    // 定義均勻分佈
-    std::uniform_int_distribution<> distrib(range[0], range[1]);
-
-    // 返回隨機整數
-    return distrib(gen);
 }
 
 Player::Player(const string& iden, const array<short, 2>& range, int cntAdjust,  const string& n, const string& des)

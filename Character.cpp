@@ -1,17 +1,16 @@
 #include <iostream>
 #include <sstream>
+#include <stdexcept>
 #include "RandomInt.h"
 #include "Character.h"
 using namespace std;
 
-const int Character::INIT_MONEY = 10000; // 暫定，全角色共享同樣的值
 int Character::currentId = 0;
 
 Character::Character(const string& n, const string& des) : name(n), description(des) {
-    this->currentMoney = Character::INIT_MONEY; // to be added by Child's initBonus
     this->id = Character::currentId++;
     this->assets.reserve(10);
-    this->tradeLog.reserve(20);
+    this->actionLog.reserve(20);
 }
 
 int Character::getTotalAsset() const {
@@ -44,13 +43,3 @@ string Character::showFinancialStatus() const {
     return info.str();
 }
 
-Player::Player(const string& iden, const array<short, 2>& range, int cntAdjust,  const string& n, const string& des)
- : identity(iden), initBonusRange(range), tradeCntAdjust(cntAdjust), Character(n, des) {
-    this->currentMoney += randomInt(this->initBonusRange);
-}
-
-string Player::showIntroduction() const {
-    string info = "身分： " + this->identity + " ";
-    info += Character::showIntroduction() + "\n";
-    return info;
-}

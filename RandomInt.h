@@ -1,3 +1,6 @@
+#ifndef RANDOM_INT_H
+#define RANDOM_INT_H
+
 #include <chrono>
 #include <random>
 #include <array>
@@ -20,3 +23,5 @@ int randomInt(int min, int max) {
     array<short, 2> range = {min, max};
     return randomInt(range);
 }
+
+#endif

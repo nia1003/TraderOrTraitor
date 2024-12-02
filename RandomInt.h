@@ -7,7 +7,7 @@
 using namespace std;
 
 // 隨機整數生成函數
-int randomInt(const array<short, 2>& range) {
+int randomInt(const array<int, 2>& range) {
     // 初始化隨機數引擎
     static auto seed = std::chrono::system_clock::now().time_since_epoch().count();   // 用於生成種子
     static std::mt19937 gen(seed); // 隨機數引擎（全局初始化以避免重複構造）
@@ -20,7 +20,7 @@ int randomInt(const array<short, 2>& range) {
 }
 
 int randomInt(int min, int max) {
-    array<short, 2> range = {min, max};
+    array<int, 2> range = {min, max};
     return randomInt(range);
 }
 

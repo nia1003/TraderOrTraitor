@@ -35,30 +35,22 @@ public:
     */
 
    // print事件資訊
-   void printEventInfo() const;
+   void printEventDetails() const;
 
 };
 // ---成員函數---
-void Event::printEventInfo() const {
-    cout << "Event Information:" << endl;
-    cout << "------------------" << endl;
-    cout << "Description: " << description << endl;
-    cout << "Impact: " << eventImpact << endl;
-    cout << "Source: " << source << endl;
+void Event::printEventDetails() const {
+    cout << "事件描述: " << description << endl;
+    cout << "影響力: " << eventImpact << endl;
+    cout << "消息來源: " << source << endl;
 
-    // 檢查是否有數據
     if (!impactWeight.empty()) {
-        cout << "Affected Stocks Weights: ";
-        size_t count = 0; // 計數器用於判斷是否是最後一個元素
-        for (const auto& pair : impactWeight) {
-            cout << pair.first << " (" << pair.second << ")";
-            if (++count != impactWeight.size()) cout << ", "; // 如果不是最後一個，添加逗號
+        cout << "影響範圍與權重: " << endl;
+        for (const auto& [ticker, weight] : impactWeight) {
+            cout << "  " << ticker << ": " << weight << endl;
         }
-        cout << endl;
     } else {
-        cout << "Affected Stocks Weights: No data available yet." << endl;
+        cout << "影響範圍: 無" << endl;
     }
-
-    cout << "------------------" << endl;
 }
 #endif

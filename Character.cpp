@@ -208,7 +208,7 @@ void Player::takeAction(const Stage& stage, const Round& round) {
                 cerr << "不存在的指令代號：" + to_string(command);
                 break;
         }
-        cout << "輸入任意文字或按enter繼續\n";
+        cout << "按enter繼續\n";
         cin.ignore(); // ignore'\n'
         string sth;
         getline(cin, sth);

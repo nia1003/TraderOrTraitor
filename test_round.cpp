@@ -70,7 +70,7 @@ int main() {
     Round r(eventPtrs);
     vector<Round> testRound = {r};
 
-    Character* testCha = new Retail("測試散戶", "描述");
+    Character* testCha = new Retail("測試用玩家", "我是散戶");
     Stage testStage(testStocks, testRound);
     testStage.characters.push_back(testCha);
 

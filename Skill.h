@@ -4,8 +4,8 @@
 class Skill{
 public:
     virtual string getName() const = 0;
-    void showInfo() const { std::cout << "技能資訊"; };
-    void activate() { std::cout << "技能啟動"; };
+    virtual string showInfo() const = 0;
+    virtual void activate() const = 0;
 };
 
 #endif

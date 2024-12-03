@@ -31,7 +31,7 @@ void Stock::printStockInfo() const
 
     cout << "------------------" << endl;
 }
-void Stock::addToPriceHistory(int current_price)
+void Stock::addToPriceHistory(int current_price) // 回合結束的時候更新
 {
     priceHistory.push_back(current_price);
 }

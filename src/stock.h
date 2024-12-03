@@ -11,11 +11,11 @@ private:
     string ticker; // 股票的代碼
     string name; // 股票名稱
     string industry; // 產業類別
-    int current_price; // 當前價格 = 原始價格 * 事件敏感度 * 事件影響力 * 影響權重
+    int current_price; // 當前價格 = 原始價格 + 事件敏感度[0.5, 2.0] * 事件影響力[-0.5, 0.5] * 影響權重[0.0, 1.0]
     string description; // 股票描述
     double sensitivity;
     /*
-        事件敏感度，0.0 < x <= 2.0
+        事件敏感度，0.5 < x <= 2.0
         1以上代表偏敏感
         1以下代表受事件影響的範圍有限，大型股的特質
     */
@@ -36,11 +36,13 @@ public:
     void addToPriceHistory(int current_price);
 
    // getter
-   double getCurrentPrice() const {return current_price;}
+   int getCurrentPrice() const {return current_price;}
 
    // print股票資訊
    void printStockInfo() const;
 
+    // setter
+    void setCurrentPrice(int currentprice) {this->current_price = currentprice;}
 };
 
 #endif

@@ -7,7 +7,7 @@ void Stage::startStage() {
     }
 }
 
-void Round::startRound(const Stage& stage) {
+void Round::startRound(Stage& stage) {
     for(auto c = stage.characters.rbegin(); c != stage.characters.rend(); ++c) {
         (*c)->takeAction(stage, *this);
     }

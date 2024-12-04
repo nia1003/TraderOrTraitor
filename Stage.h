@@ -13,17 +13,19 @@ using namespace std;
     section3: show results after the operaions
 */
 
+class Character;
 struct Stage;
 
 struct Round {
     vector<Event*> events;
 
     Round(vector<Event*>& e) : events(e) {}
-    void startRound(const Stage& stage);
+    void startRound(Stage& stage);
 };
 
 struct Stage {
     vector<Character*> characters;
+    vector<Stock> stockVector;
     unordered_map<string, Stock*> stocks;
     vector<Round> rounds;
     int currentRound;

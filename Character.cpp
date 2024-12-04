@@ -9,11 +9,24 @@ using namespace std;
 constexpr short MAX_BUY_CNT = 50;
 constexpr short MAX_SELL_CNT = 25;
 
+const unordered_map<string, int> Character::maxActionCntMap = {
+    {"Retail", 5}, {"Rich", 3}, // Player
+    {"ShortTerm", 6}, {"LongTerm", 3}, {"Defensive", 4}, {"Insider", 3} // Robot
+};
+
+const unordered_map<string, array<int, 2>> Character::initMoneyRangeMap = {
+    {"Retail", {4000, 5000}}, {"Rich", {7500, 9000}}, // Player
+    {"ShortTerm", {4000, 5500}}, {"LongTerm", {6000, 7000}}, {"Defensive", {6500, 8000}}, {"Insider", {4500, 5500}} // Robot
+};
+
 int Character::currentId = 0;
 
-Character::Character(const string& n, const string& des) : name(n), description(des) {
+Character::Character(const string& t, const string& n, const string& des) : type(t), name(n), description(des) {
     this->id = Character::currentId++;
     this->assets.reserve(10); // 最多10種股票
+    this->actionCnt = maxActionCntMap.at(this->type);
+    this->initMoney = randomInt(initMoneyRangeMap.at(this->type));
+    this->currentMoney = this->initMoney;
 }
 
 int Character::getTotalAsset() const {
@@ -108,7 +121,7 @@ void Character::tradeStocks(const Stage& stage, const string& ticker, int number
     }
 }
 
-void Player::takeAction(const Stage& stage, const Round& round) {
+void Player::takeAction(Stage& stage, const Round& round) {
     while (this->actionCnt > 0) {
         cout << "剩餘操作次數：" << this->actionCnt << '\n';
         cout << "輸入操作指令\n"
@@ -167,7 +180,7 @@ void Player::takeAction(const Stage& stage, const Round& round) {
                 cin >> id;
                 try{
                     Skill& theSkill = *this->skills.at(id - 1);
-                    theSkill.activate();
+                    theSkill.activate(stage, round, *this);
                     --this->actionCnt;
                     this->actionLog.push_back("使用技能：" + theSkill.getName());
                 } catch (out_of_range& e) {
@@ -215,18 +228,11 @@ void Player::takeAction(const Stage& stage, const Round& round) {
     }
 }
 
-const int Retail::maxActionCnt = 6;
-const array<int, 2> Retail::initMoneyRange = {4000, 5500};
+Retail::Retail(const string& n, const string& des) : Player("Retail", n, des) {}
 
-Retail::Retail(const string& n, const string& des) : Player(n, des) {
-    this->actionCnt = Retail::maxActionCnt;
-    this->currentMoney = randomInt(Retail::initMoneyRange);
-}
+Rich::Rich(const string& n, const string& des) : Player("Rich", n, des) {}
 
-const int Rich::maxActionCnt = 3;
-const array<int, 2> Rich::initMoneyRange = {7500, 9000};
 
-Rich::Rich(const string& n, const string& des) : Player(n, des) {
-    this->actionCnt = Rich::maxActionCnt;
-    this->currentMoney = randomInt(Rich::initMoneyRange);
-}
+ShortTerm::ShortTerm(const string& n, const string& des) : Robot("ShortTerm", n, des) {}
+
+LongTerm::LongTerm(const string& n, const string& des) : Robot("LongTerm", n, des) {}

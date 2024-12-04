@@ -26,7 +26,15 @@ struct Asset {
 
 class Character {
 protected:
+    // 各角色的基本資訊
+    static const unordered_map<string, int> maxActionCntMap;
+    static const unordered_map<string, array<int, 2>> initMoneyRangeMap;
+
     static int currentId; // 模仿SQL的AUTO_INCREMENT
+
+    // 可能用到的
+    int initMoney; // 隨機後的結果
+    string type;
 
     // 身分相關
     short id; // served as key in Stage's characters array
@@ -43,17 +51,19 @@ protected:
 
 public:
     // 角色創建相關
-    Character(const string& n, const string& des);
+    Character(const string& t, const string& n, const string& des);
+    virtual ~Character() = default;
     static void resetCurrentId() { Character::currentId = 0; }
     
     // getters
     const string& getName() const { return this->name; };
+    int getActionCnt() { return this->actionCnt; }
 
     // 遊戲背後邏輯相關(輔助遊戲進行)
     void obtainSkills(Skill* s) { skills.push_back(s); }
     int getTotalAsset() const; // currentMoney + Σ(s.num * s.price) for s in stocks
-    virtual void resetActionCnt() = 0;
-    virtual void takeAction(const Stage&, const Round&) = 0; // 實現各自的操作策略
+    void resetActionCnt() { this->actionCnt = Character::maxActionCntMap.at(this->type); }
+    virtual void takeAction(Stage&, const Round&) = 0; // 實現各自的操作策略
 
     // 遊戲操作相關(玩家有對應操作)
     void tradeStocks(const Stage&, const string& ticker, int number, bool isbuy); // number大於0表示買入，小於0表示賣出
@@ -64,31 +74,46 @@ public:
     const string& showTradeLog() const;
 };
 
+
+// 玩家部分
 class Player : public Character {
 protected:
 public:
-    Player(const string& n, const string& des) : Character(n, des) {}
-    void takeAction(const Stage&, const Round&) override;
-    int getActionCnt() { return this->actionCnt; }
+    Player(const string& t, const string& n, const string& des) : Character(t, n, des) {}
+    void takeAction(Stage&, const Round&) override;
 };
 
 class Retail : public Player {
 private:
-    static const int maxActionCnt;
-    static const array<int, 2> initMoneyRange;
 public:
     Retail(const string& n, const string& des);
-    void resetActionCnt() override { this->actionCnt = Retail::maxActionCnt; }
 };
 
 class Rich : public Player {
 private:
-    static const int maxActionCnt;
-    static const array<int, 2> initMoneyRange;
 public:
     Rich(const string& n, const string& des);
-    void resetActionCnt() override { this->actionCnt = Rich::maxActionCnt; }
 };
 
+// 機器人部分
+class Robot : public Character {
+protected:
+    bool powerful;
+public:
+    Robot(const string& t, const string& n, const string& des) : Character(t, n, des) {}
+    // 機器人根據身分有不同的takeAction
+};
+
+class ShortTerm : public Robot {
+private:
+public:
+    ShortTerm(const string& n, const string& des);
+};
+
+class LongTerm : public Robot {
+private:
+public:
+    LongTerm(const string& n, const string& des);
+};
 
 #endif

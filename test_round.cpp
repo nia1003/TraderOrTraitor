@@ -10,7 +10,7 @@
 using namespace std;
 
 // 初始化股票列表
-vector<Stock> stocks = {
+vector<Stock> stockVector = {
     // 科技股
     Stock("AAPL", "Apple Inc.", "Technology", 150, "疫情期間持續推出創新產品，並加速研發自家晶片，硬體需求保持強勁。然而，疫情後需關注一般消費者的購買力是否能夠支撐其營收增長。", 0.8),
     Stock("MSFT", "Microsoft", "Technology", 280, "受益於遠端辦公需求以及 Azure 雲端業務的增長，近期業績表現穩定，未來發展值得關注。", 1.1),
@@ -63,8 +63,8 @@ int main() {
     );
 
     unordered_map<string, Stock*> testStocks;
-    for(int i = 0; i < stocks.size(); ++i)
-        testStocks[stocks[i].getTicker()] = &stocks[i];
+    for(int i = 0; i < stockVector.size(); ++i)
+        testStocks[stockVector[i].getTicker()] = &stockVector[i];
 
     vector<Event*> eventPtrs;
     for(Event& e: events)

@@ -4,6 +4,8 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include "Event.h"
+
 using namespace std;
 
 class Stock{
@@ -33,16 +35,17 @@ public:
     */
 
    // 更新歷史價格
-    void addToPriceHistory(int current_price);
+   void addToPriceHistory(int current_price);
 
    // getter
    int getCurrentPrice() const {return current_price;}
+   double getSensitivity() const {return sensitivity;}
 
    // print股票資訊
    void printStockInfo() const;
 
-    // setter
-    void setCurrentPrice(int currentprice) {this->current_price = currentprice;}
+   // setter
+   void setCurrentPrice(int currentprice) {this->current_price = currentprice;}
 };
 
 #endif

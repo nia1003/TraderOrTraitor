@@ -21,3 +21,21 @@ void Event::printEventDetails() const {
         cout << "影響範圍: 無" << endl;
     }
 }
+// 影響股價的函數
+void Event::affectStockPrice(unordered_map<string, Stock>& stockMap) {
+    for (auto& [ticker, stock] : stockMap) { // 可能會有衝突
+        // 確定這支股票是否受影響
+        if (impactWeight.count(ticker)) {
+            double weight = impactWeight[ticker];
+            int newPrice = stock.getCurrentPrice() *
+                                (1 + stock.getSensitivity() * eventImpact * weight);
+            int oldPrice = stock.getCurrentPrice();
+
+            // 更新股價
+            cout << ticker << "," << stock.getSensitivity() << "," << eventImpact << "," << weight << endl;
+            stock.setCurrentPrice(newPrice);
+            cout << "Updated " << ticker << " from " << oldPrice
+                    << " to new price: " << newPrice << endl;
+        }
+    }
+}

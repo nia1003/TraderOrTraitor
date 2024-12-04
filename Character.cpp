@@ -125,7 +125,7 @@ void Player::takeAction(const Stage& stage, const Round& round) {
         switch (command) {
             case 1:
                 for(Event* e: round.events)
-                    e->printEventInfo();
+                    e->printEventDetails();
                 break;
 
             case 2: {

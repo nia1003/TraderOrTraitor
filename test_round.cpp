@@ -1,3 +1,5 @@
+// 編譯命令：g++ test_round.cpp Character.cpp Stage.cpp Stock.cpp Event.cpp -o test_round
+
 #include <iostream>
 #include <windows.h>
 #include "Character.h"

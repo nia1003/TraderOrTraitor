@@ -114,6 +114,7 @@ class LongTerm : public Robot {
 private:
 public:
     LongTerm(const string& n, const string& des);
+    void takeAction(Stage&, const Round&) override;
 };
 
 #endif

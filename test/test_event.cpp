@@ -2,8 +2,8 @@
 #include <vector>
 #include <unordered_map>
 #include <windows.h>
-#include "../src/Event.h"
-#include "../src/Stock.h"
+#include "../Event.h"
+#include "../Stock.h"
 
 
 using namespace std;
@@ -274,7 +274,6 @@ int main() {
     //     cout << "------------------" << endl;
     // }
 
-    events[3].affectStockPrice(stockMap);
 
     return 0;
 }

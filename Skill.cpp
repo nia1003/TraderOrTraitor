@@ -1,9 +1,11 @@
-# include "Skill.h"
+#include "Skill.h"
+#include "RandomInt.h"
+#include <typeinfo> // for std::bad_cast
+#include <unordered_set>
 using namespace std;
 
 
 Result AssetGrowth::activate(Stage& stage, Character& cha) const {
-    --cha.actionCnt;
     int maxRoundCnt = 0;
     Asset theAsset;
 
@@ -40,5 +42,25 @@ Result AssetGrowth::activate(Stage& stage, Character& cha) const {
     } else {
         return Result("沒有持股超過3回合的股票");
     }
-        
+}
+
+Result InsideScoop::activate(Stage& stage, Character& cha) const {
+    static unordered_set<string> industrySet = {"Technology", "Biotech", "Consumer Staples", "Semiconductor", "Airlines"};
+
+    int curRound = stage.getCurRound();
+    if(curRound == 10){
+        int increment = cha.getTotalAsset() * 0.01;
+        cha.currentMoney += increment;
+        return Result("第十回合使用，轉為獲得" + to_string(increment));
+    }
+
+    // 正式找到下回合事件
+    bool eventOccur = false;
+    vector<Event*>& events = stage.rounds[curRound].events;
+    int eventId =  randomInt(0, events.size() - 1);
+    return Result(events[eventId]->description, -100, events[eventId]);
+}
+
+Result Peek::activate(Stage& stage, Character& cha) const {
+
 }

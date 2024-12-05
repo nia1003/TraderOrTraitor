@@ -131,11 +131,14 @@ int Character::tradeStocks(const Stage& stage, const string& ticker, int number,
     return tradeAmount;
 }
 
-void Character::useSkill(Stage& stage, int skillId) {
-    Skill* theSkill = this->skills.at(skillId - 1);
-    theSkill->activate(stage, *this);
+Result Character::useSkill(Stage& stage, int skillId) {
+    Skill* theSkill = this->skills.at(skillId - 1); // may throw out_of_range
+    Result result = theSkill->activate(stage, *this);
+
     this->actionLog.push_back("使用技能：" + theSkill->getName());
     this->skills.erase(this->skills.begin() + skillId - 1);
+    --this->actionCnt;
+    return result;
 }
 
 Player::Player(const string& t, const string& n, const string& des) : Character(t, n, des) {
@@ -160,7 +163,7 @@ void Player::takeAction(Stage& stage, const Round& round) {
         switch (command) {
             case 1:
                 for(Event* e: round.events)
-                    e->printEventDetails();
+                    e->printEventPartialDetails();
                 break;
 
             case 2: {
@@ -178,7 +181,7 @@ void Player::takeAction(Stage& stage, const Round& round) {
 
             case 3: {
                 for(const pair<string, Stock*>& p: stage.stocks)
-                    p.second->printStockInfo();
+                    p.second->printStockPartialInfo();
                 break;
             }
                 
@@ -202,7 +205,7 @@ void Player::takeAction(Stage& stage, const Round& round) {
                 int id;
                 cin >> id;
                 try{
-                    this->useSkill(stage, id);
+                    cout << this->useSkill(stage, id).strVal << "\n";
                 } catch (out_of_range& e) {
                     cerr << "不存在的技能編號：" + to_string(id) + "\n";
                 }
@@ -304,3 +307,15 @@ void LongTerm::takeAction(Stage& stage, const Round& round) {
         }
     }
 }
+
+const unordered_map<string, vector<string>> Insider::industryToTickers = {
+    {"Technology", {"AAPL", "UBER", "MSFT"}},
+    {"Biotech", {"MRNA"}},
+    {"Consumer Staples", {"KO", "COST"}},
+    {"Semiconductor", {"TSM", "INTC"}},
+    {"Airlines", {"UAL", "DAL"}}
+};
+
+Insider::Insider(const string& ind, const string& n, const string& des) : industry(ind), Robot("Insider", n, des) {
+    this->industryStock = Insider::industryToTickers.at(this->industry);
+};

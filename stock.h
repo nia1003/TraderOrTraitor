@@ -4,6 +4,8 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include "Event.h"
+
 using namespace std;
 
 class Stock{
@@ -11,13 +13,13 @@ private:
     string ticker; // 股票的代碼
     string name; // 股票名稱
     string industry; // 產業類別
-    int current_price; // 當前價格 = 原始價格 * 事件敏感度 * 事件影響力 * 影響權重
+    int current_price; // 當前價格 = 原始價格 * (1 + 事件敏感度[0.5, 2.0] * 事件影響力[-0.2, 0.2] * 影響權重[0.0, 1.0])
     string description; // 股票描述
     double sensitivity;
     /*
-        事件敏感度，0.0 < x <= 2.0
-        1以上代表偏敏感
-        1以下代表受事件影響的範圍有限，大型股的特質
+        事件敏感度，0.5 < x <= 2.0
+        <1.0：穩定的大型公司（如 TSM, KO）。
+        1.0 ~ 2.0：成長型或波動性較大的公司（如 UBER, MRNA）。
     */
     vector<double> priceHistory; // 股票的歷史價格數據，回合結束時更新
 
@@ -33,16 +35,20 @@ public:
     */
 
    // 更新歷史價格
-    void addToPriceHistory(int current_price);
+   void addToPriceHistory(int current_price);
 
    // getter
-   const string& getTicker() const { return this->ticker; }
-   const string& getName() const { return this->name; }
-   double getCurrentPrice() const {return current_price;}
-   int getLastPrice() const {return 0;}
+   string getName() const { return this->name; }
+   int getCurrentPrice() const {return current_price;}
+   int getPriceLastRound() const;
+   double getSensitivity() const {return sensitivity;}
 
    // print股票資訊
    void printStockInfo() const;
+   void printStockPartialInfo() const;
+
+   // setter
+   void setCurrentPrice(int currentprice) {this->current_price = currentprice;}
 };
 
 #endif

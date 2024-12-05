@@ -12,6 +12,7 @@ using namespace std;
  // forward declaration
 struct Stage;
 struct Round;
+struct Result;
 class Skill;
 
 struct Asset {
@@ -72,13 +73,14 @@ public:
 
     // 遊戲操作相關(玩家有對應操作)
     int tradeStocks(const Stage&, const string& ticker, int number, bool isbuy); // 回傳交易額度
-    void useSkill(Stage&, int skillId);
+    Result useSkill(Stage&, int skillId);
     string showSkills() const;
     string showIntroduction() const; // 展示身分、名字、介紹
     string showFinancialStatus() const; // 展示currentMoney、stocks
     string showActionLog() const;
 
 friend class AssetGrowth;
+friend class InsideScoop;
 };
 
 
@@ -127,6 +129,23 @@ private:
 public:
     LongTerm(const string& n, const string& des);
     void takeAction(Stage&, const Round&) override;
+};
+
+class Defensive : public Robot {
+private:
+public:
+    Defensive(const string& n, const string& des);
+};
+
+class Insider : public Robot {
+private:
+    static const unordered_map<string, vector<string>> industryToTickers;
+    string industry;
+    vector<string> industryStock;
+public:
+    Insider(const string& ind, const string& n, const string& des);
+    void takeAction(Stage&, const Round&) override;
+    string getIndustry() { return this->industry; }
 };
 
 #endif

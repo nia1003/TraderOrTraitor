@@ -12,15 +12,16 @@ class Skill{
 public:
     virtual string getName() const = 0;
     virtual string showInfo() const = 0;
-    virtual string activate(Stage& stage, const Round& round, Character& cha) const = 0;
+    virtual pair<string, int> activate(Stage& stage, const Round& round, Character& cha) const = 0;
+    // 需要時回傳目標股票與其漲幅，或事件內容，否則為空
 };
 
 class Foresight : public Skill {
     string getName() const override { return "洞燭先機"; }
 };
 
-class StableGrowth : public Skill {
-    string getName() const override { return "穩定增值"; }
+class AssetGrowth : public Skill {
+    string getName() const override { return "資產增值"; }
 };
 
 class Hedge : public Skill {

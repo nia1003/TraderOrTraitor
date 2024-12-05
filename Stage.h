@@ -25,7 +25,6 @@ struct Round {
 
 struct Stage {
     vector<Character*> characters;
-    vector<Stock> stockVector;
     unordered_map<string, Stock*> stocks;
     vector<Round> rounds;
     int currentRound;

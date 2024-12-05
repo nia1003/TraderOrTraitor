@@ -21,6 +21,10 @@ void Event::printEventDetails() const {
         cout << "影響範圍: 無" << endl;
     }
 }
+void Event::printEventPartialDetails() const {
+    cout << "事件描述: " << description << endl;
+    cout << "消息來源: " << source << endl;
+}
 // 影響股價的函數
 void Event::affectStockPrice(unordered_map<string, Stock>& stockMap) {
     for (auto& [ticker, stock] : stockMap) { // 可能會有衝突

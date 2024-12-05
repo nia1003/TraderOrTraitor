@@ -43,6 +43,7 @@ public:
 
    // print股票資訊
    void printStockInfo() const;
+   void printStockPartialInfo() const;
 
    // setter
    void setCurrentPrice(int currentprice) {this->current_price = currentprice;}

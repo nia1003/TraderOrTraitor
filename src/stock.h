@@ -39,6 +39,7 @@ public:
 
    // getter
    int getCurrentPrice() const {return current_price;}
+   int getPriceLastRound() const;
    double getSensitivity() const {return sensitivity;}
 
    // print股票資訊

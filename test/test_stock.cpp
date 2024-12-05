@@ -38,12 +38,14 @@ int main()
         {Stock("DAL", "Delta Air Lines", "Airlines", 45, "作為航空業龍頭之一，疫苗普及推動旅遊需求回升，但挑戰依然存在", 1.2)}      
     };
 
-    // 遍歷並打印股票資訊
-    for (const auto& [ticker, stock] : stockMap) {
-        cout << "Ticker: " << ticker << endl;
-        stock.printStockInfo();
-        cout << "------------------" << endl;
-    }
+    Stock apple("AAPL", "Apple Inc.", "Technology", 150, "疫情期間持續推出創新產品，並加速研發自家晶片，硬體需求保持強勁。然而，疫情後需關注一般消費者的購買力是否能夠支撐其營收增長。", 0.8);
+    apple.addToPriceHistory(111);
+    apple.addToPriceHistory(150);
+    cout << apple.getPriceLastRound() << endl;
+
+    apple.addToPriceHistory(160);
+    cout << apple.getPriceLastRound() << endl;    
+
 
 return 0;
 

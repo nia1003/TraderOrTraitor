@@ -12,7 +12,7 @@ int main() {
     SetConsoleOutputCP(CP_UTF8); // 設定主控台為 UTF-8
     SetConsoleCP(CP_UTF8);       // 設定輸入為 UTF-8
     
-    vector<Event> events;
+    vector<Event> events; // 調用的時候注意每回合3個事件，否則會出錯
 
     // 回合一 事件1：新產品發布
     events.emplace_back(

@@ -36,15 +36,6 @@ public:
 
     // 影響股價的函數
     void affectStockPrice(unordered_map<string, Stock>& stockMap);
-    /*
-    需要獲得個股的事件敏感度
-    遍歷unordered_map陣列裡面的股票
-        取出現價(如何搜尋指定物件)
-        計算出新價格
-        更新價格
-        更新歷史價格
-    
-    */
 };
 
 #endif

@@ -6,9 +6,6 @@
 #include "Stage.h"
 using namespace std;
 
-constexpr short MAX_BUY_CNT = 50;
-constexpr short MAX_SELL_CNT = 25;
-
 const unordered_map<string, int> Character::maxActionCntMap = {
     {"Retail", 5}, {"Rich", 3}, // Player
     {"ShortTerm", 6}, {"LongTerm", 3}, {"Defensive", 4}, {"Insider", 3} // Robot
@@ -19,10 +16,10 @@ const unordered_map<string, array<int, 2>> Character::initMoneyRangeMap = {
     {"ShortTerm", {4000, 5500}}, {"LongTerm", {6000, 7000}}, {"Defensive", {6500, 8000}}, {"Insider", {4500, 5500}} // Robot
 };
 
-int Character::currentId = 0;
+const array<short, 2> Character::tradeLimits = {40, 100};
+vector<Skill> Character::skillList = {Foresight(), AssetGrowth(), Hedge(), InsideScoop(), Gamble(), Peek()};
 
 Character::Character(const string& t, const string& n, const string& des) : type(t), name(n), description(des) {
-    this->id = Character::currentId++;
     this->assets.reserve(10); // 最多10種股票
     this->actionCnt = maxActionCntMap.at(this->type);
     this->initMoney = randomInt(initMoneyRangeMap.at(this->type));
@@ -41,12 +38,12 @@ string Character::showSkills() const {
     if(this->skills.empty())
         return "目前沒有技能\n";
     
-    "持有技能：";
+    stringstream ss;
+    ss << "持有技能：\n";
     for(int i = 0; i < skills.size(); ++i){
-        skills[i]->getName();
-        cout << ',';
+        ss << i + 1 << ": " << skills[i]->getName() << '\n';
     }
-    return "\n";
+    return ss.str();
 }
 
 string Character::showIntroduction() const {
@@ -66,13 +63,22 @@ string Character::showFinancialStatus() const {
     else {
         info << '\n';
         for(const auto& pair: this->assets) 
-            info << "    " << pair.second.stock->getName() << " X " << pair.second.number << "\n";
+            info << "    " << pair.second.stock->getName() << " X " << pair.second.number << "持股回合數：" << pair.second.roundCnt << "\n";
     }
     info << "總資產：" << this->getTotalAsset() << '\n';
     return info.str();
 }
 
-void Character::tradeStocks(const Stage& stage, const string& ticker, int number, bool isbuy) {
+string Character::showActionLog() const {
+    if(this->actionLog.empty())
+        return "尚無操作紀錄";
+
+    stringstream ss;
+    for(const string& record: this->actionLog)
+        ss << record << "\n";
+}
+
+int Character::tradeStocks(const Stage& stage, const string& ticker, int number, bool isbuy) {
     // 股票代碼與基本數量檢查
     auto stock = stage.stocks.find(ticker);
     if(stock == stage.stocks.end())
@@ -80,15 +86,15 @@ void Character::tradeStocks(const Stage& stage, const string& ticker, int number
     if(number <= 0)
         throw invalid_argument("交易量需大於0");
 
-    if (isbuy && number > MAX_BUY_CNT)
-        throw invalid_argument("一次最多買入" + to_string(MAX_BUY_CNT) + "張股票");
-    else if (!isbuy && number > MAX_SELL_CNT)
-        throw invalid_argument("一次最多賣出" + to_string(MAX_SELL_CNT) + "張股票");
+    if (isbuy && number > this->tradeLimit)
+        throw invalid_argument("一次最多買入" + to_string(this->tradeLimit) + "張股票");
+    else if (!isbuy && number > this->tradeLimit / 2)
+        throw invalid_argument("一次最多賣出" + to_string(this->tradeLimit / 2) + "張股票");
     
     // 進入買賣檢查
+    int tradeAmount = stock->second->getCurrentPrice() * number;
     if (isbuy) {
-        int cost = stock->second->getCurrentPrice() * number;
-        if (this->currentMoney < cost) 
+        if (this->currentMoney < tradeAmount) 
             throw runtime_error("資金不足無法購買");
         
         // 正式買入
@@ -99,11 +105,11 @@ void Character::tradeStocks(const Stage& stage, const string& ticker, int number
             // 未持有該股，將其加入assets中
             this->assets.insert({ticker, Asset(number, stock->second)});
         }
-        this->currentMoney -= cost;
+        this->currentMoney -= tradeAmount;
 
     } else {
         // 賣出
-        Asset* myStock; // 需修改其值，所以用ptr
+        Asset* myStock; // 需修改其數量，所以用ptr
         try {
             // 假設以持有該股
             myStock = &this->assets.at(ticker);
@@ -117,8 +123,23 @@ void Character::tradeStocks(const Stage& stage, const string& ticker, int number
         myStock->number -= number;
         if(myStock->number == 0)
             this->assets.erase(ticker);
-        this->currentMoney += stock->second->getCurrentPrice() * number;
+        this->currentMoney += tradeAmount;
     }
+    --this->actionCnt;
+    string buyOrSell = isbuy ? "買入" : "賣出";
+    this->actionLog.push_back(buyOrSell + to_string(number) + "單位的" + ticker);
+    return tradeAmount;
+}
+
+void Character::useSkill(Stage& stage, int skillId) {
+    Skill* theSkill = this->skills.at(skillId - 1);
+    theSkill->activate(stage, *this);
+    this->actionLog.push_back("使用技能：" + theSkill->getName());
+    this->skills.erase(this->skills.begin() + skillId - 1);
+}
+
+Player::Player(const string& t, const string& n, const string& des) : Character(t, n, des) {
+    this->tradeLimit = Character::tradeLimits[0];
 }
 
 void Player::takeAction(Stage& stage, const Round& round) {
@@ -132,7 +153,8 @@ void Player::takeAction(Stage& stage, const Round& round) {
              << "5: 查看自身資訊\n"
              << "6: 使用技能(消耗操作次數)\n"
              << "7: 交易股票(消耗操作次數)\n"
-             << "8: 跳過剩餘操作\n";
+             << "8: 查看操作紀錄\n"
+             << "9: 跳過剩餘操作\n";
         int command;
         cin >> command;
         switch (command) {
@@ -146,7 +168,8 @@ void Player::takeAction(Stage& stage, const Round& round) {
                 int id;
                 cin >> id;
                 try{
-                    cout << stage.characters.at(id - 1)->showIntroduction();
+                    Character* she = stage.characters.at(id - 1);
+                    cout << she->showIntroduction() << "總資產" << she->getTotalAsset() << "\n";
                 } catch (out_of_range& e) {
                     cerr << "不存在的角色編號：" + to_string(id) + "\n";
                 }
@@ -162,7 +185,7 @@ void Player::takeAction(Stage& stage, const Round& round) {
             case 4: {
                 if(this->skills.empty())
                     cout << "目前沒有技能\n";
-                for(Skill* s: this->skills)
+                for(auto* s: this->skills)
                     s->showInfo();
                 break;
             }
@@ -179,10 +202,7 @@ void Player::takeAction(Stage& stage, const Round& round) {
                 int id;
                 cin >> id;
                 try{
-                    Skill& theSkill = *this->skills.at(id - 1);
-                    theSkill.activate(stage, round, *this);
-                    --this->actionCnt;
-                    this->actionLog.push_back("使用技能：" + theSkill.getName());
+                    this->useSkill(stage, id);
                 } catch (out_of_range& e) {
                     cerr << "不存在的技能編號：" + to_string(id) + "\n";
                 }
@@ -199,9 +219,6 @@ void Player::takeAction(Stage& stage, const Round& round) {
 
                 try {
                     this->tradeStocks(stage, ticker, number, buy);
-                    --this->actionCnt;
-                    string buyOrSell = buy ? "買入" : "賣出";
-                    this->actionLog.push_back(buyOrSell + to_string(number) + "單位的" + ticker);
                 } catch (exception& e) {
                     cerr << e.what() << '\n';
                 }
@@ -209,6 +226,11 @@ void Player::takeAction(Stage& stage, const Round& round) {
             }
 
             case 8: {
+                cout << this->showActionLog();
+                break;
+            }
+
+            case 9: {
                 cout << "是否確定跳過操作? (輸入Y表示確定)\n";
                 char yes;
                 cin >> yes;
@@ -233,6 +255,52 @@ Retail::Retail(const string& n, const string& des) : Player("Retail", n, des) {}
 Rich::Rich(const string& n, const string& des) : Player("Rich", n, des) {}
 
 
+// 機器人
+Robot::Robot(const string& t, const string& n, const string& des) : Character(t, n, des) {
+    this->tradeLimit = Character::tradeLimits[1];
+}
+
+template <typename T>
+string Robot::randomStock(const unordered_map<string, T>& myAssets) {
+    vector<pair<string, T>> a(myAssets.begin(), myAssets.end());
+    int index = randomInt(0, a.size() - 1);
+    return a[index].first;
+}
+
 ShortTerm::ShortTerm(const string& n, const string& des) : Robot("ShortTerm", n, des) {}
 
-LongTerm::LongTerm(const string& n, const string& des) : Robot("LongTerm", n, des) {}
+vector<string> LongTerm::preferredStocks = {"AAPL", "MSFT", "COST", "KO", "INTC"};
+
+LongTerm::LongTerm(const string& n, const string& des) : Robot("LongTerm", n, des) {
+    for(int _ = 0; _ < 3; ++_)
+        this->skills.push_back(&Character::skillList[1]);
+}
+
+void LongTerm::takeAction(Stage& stage, const Round& round) {
+    int curRound = stage.getCurRound();
+    if (curRound == 4 || curRound == 8 || curRound == 10)
+        this->useSkill(stage, 1);
+
+    while(this->actionCnt > 0 && this->currentMoney > 600) {
+        if(this->currentMoney > this->initMoney / 10){
+            int num = 15;
+            string targetStock = LongTerm::preferredStocks[randomInt(0, preferredStocks.size() - 1)];
+            while(true){
+                try {
+                    this->tradeStocks(stage, targetStock, num, true);
+                    break;
+                } catch (exception& e) {
+                    if(num == 1){
+                        break;
+                    }
+                    else
+                        num /= 2;
+                }
+            }
+        } else {
+            string target = this->randomStock(this->assets);
+            int num = this->assets[target].number / 3;
+            this->tradeStocks(stage, target, num, false);
+        }
+    }
+}

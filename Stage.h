@@ -32,6 +32,7 @@ struct Stage {
 
     Stage(unordered_map<string, Stock*>& s, vector<Round>& r) : stocks(s), rounds(r), currentRound(1) {}
     void startStage();
+    int getCurRound() const { return currentRound; }
 };
 
 #endif

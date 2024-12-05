@@ -39,6 +39,7 @@ public:
    const string& getTicker() const { return this->ticker; }
    const string& getName() const { return this->name; }
    double getCurrentPrice() const {return current_price;}
+   int getLastPrice() const {return 0;}
 
    // print股票資訊
    void printStockInfo() const;

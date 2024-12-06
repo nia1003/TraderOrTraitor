@@ -5,6 +5,7 @@
 #include "../Event.h"
 #include "../Stock.h"
 
+const int EVENT_IMPACT_PARAMETER = 2;
 
 using namespace std;
 
@@ -18,7 +19,7 @@ int main() {
     events.emplace_back(
         unordered_map<string, double>{{"AAPL", 0.5}, {"MSFT", 0.3}, {"INTC", 0.2}},
         "Apple 發布新一代 MacBook Pro 和 AirPods Pro，引發市場對其創新能力的信心",
-        0.08,
+        0.08 * EVENT_IMPACT_PARAMETER,
         "Tech News"
     );
 
@@ -26,7 +27,7 @@ int main() {
     events.emplace_back(
         unordered_map<string, double>{{"TSM", 0.6}, {"INTC", 0.5}, {"COST", 0.5}},
         "中美貿易談判取得進展，市場對半導體和消費必需品的需求提升",
-        0.1,
+        0.1 * EVENT_IMPACT_PARAMETER,
         "Global News"
     );
 
@@ -34,7 +35,7 @@ int main() {
     events.emplace_back(
         unordered_map<string, double>{{"UAL", 0.6}, {"DAL", 0.6}, {"KO", 0.5}},
         "感恩節即將到來，航空業迎來旺季，旅遊需求上升",
-        0.08,
+        0.08 * EVENT_IMPACT_PARAMETER,
         "Holiday Trends"
     );
 
@@ -42,7 +43,7 @@ int main() {
     events.emplace_back(
         unordered_map<string, double>{{"AAPL", -1.0}, {"MSFT", -1.0}, {"UBER", -1.0}, {"MRNA", -1.0}, {"COST", -1.0}, {"KO", -1.0}, {"TSM", -1.0}, {"INTC", -1.0}, {"UAL", -1.0}, {"DAL", -1.0}}, // 使用 "ALL" 表示全體股票
         "COVID-19 疫情在全球範圍內迅速蔓延，各國實施封鎖措施，對經濟活動造成重大影響，導致市場普遍恐慌，全體股價出現劇烈下跌",
-        0.2,  // 強烈負面影響
+        0.2 * EVENT_IMPACT_PARAMETER,  // 強烈負面影響
         "World Health Organization"
     );
 
@@ -50,7 +51,7 @@ int main() {
     events.emplace_back(
         unordered_map<string, double>{{"MSFT", 0.5}, {"AAPL", 0.5}},
         "隨著疫情蔓延，企業轉向遠端工作模式，對線上協作工具的需求激增",
-        0.08,  // 穩定正面影響
+        0.08 * EVENT_IMPACT_PARAMETER,  // 穩定正面影響
         "Tech Industry Reports"
     );
 
@@ -58,7 +59,7 @@ int main() {
     events.emplace_back(
         unordered_map<string, double>{{"COST", 0.4}, {"KO", 0.4}},
         "疫情期間，消費者大量購買生活必需品，導致相關產品需求激增",
-        0.05,  // 穩定正面影響
+        0.08 * EVENT_IMPACT_PARAMETER,  // 穩定正面影響
         "Market Analysis"
     );
 
@@ -66,7 +67,7 @@ int main() {
     events.emplace_back(
         unordered_map<string, double>{{"AAPL", 0.6}, {"MSFT", 0.6}},
         "主要科技公司公佈的第一季度財報超出市場預期，顯示出強勁的業績表現",
-        0.1,  // 正面影響
+        0.12 * EVENT_IMPACT_PARAMETER,  // 正面影響
         "Tech News"
     );
 
@@ -74,7 +75,7 @@ int main() {
     events.emplace_back(
         unordered_map<string, double>{{"MRNA", 1.0}, {"UBER", 0.4}},
         "生技公司在 COVID-19 疫苗研發上取得重要進展，進入臨床試驗階段",
-        0.12,  // 強烈正面影響
+        0.12 * EVENT_IMPACT_PARAMETER,  // 強烈正面影響
         "Health Reports"
     );
 
@@ -82,7 +83,7 @@ int main() {
     events.emplace_back(
         unordered_map<string, double>{{"TSM", -0.7}, {"INTC", -0.7}},
         "疫情導致的供應鏈中斷影響半導體行業的生產和交付",
-        0.05,  // 負面影響
+        0.05 * EVENT_IMPACT_PARAMETER,  // 負面影響
         "Industry Reports"
     );
 
@@ -90,7 +91,7 @@ int main() {
     events.emplace_back(
         unordered_map<string, double>{{"AAPL", 0.4}, {"MSFT", 0.3}},
         "主要科技公司在 8 月推出新產品線，滿足居家工作和學習的需求，市場反應熱烈",
-        0.08,  // 正面影響
+        0.08 * EVENT_IMPACT_PARAMETER,  // 正面影響
         "Tech Industry Reports"
     );
 
@@ -98,7 +99,7 @@ int main() {
     events.emplace_back(
         unordered_map<string, double>{{"MRNA", 0.7}, {"UBER", 0.4}, {"UAL", 0.4}, {"DAL", 0.4}},
         "生技公司宣佈 COVID-19 疫苗研發進入最後階段，市場對疫情結束的預期增強",
-        0.1,  // 強烈正面影響
+        0.1 * EVENT_IMPACT_PARAMETER,  // 強烈正面影響
         "Health and Market News"
     );
 
@@ -106,7 +107,7 @@ int main() {
     events.emplace_back(
         unordered_map<string, double>{{"COST", 0.4}, {"KO", 0.4}},
         "疫情期間，消費者對必需品的需求持續增長，相關企業業績提升",
-        0.07,  // 穩定正面影響
+        0.08 * EVENT_IMPACT_PARAMETER,  // 穩定正面影響
         "Consumer Trends"
     );
 
@@ -114,7 +115,7 @@ int main() {
     events.emplace_back(
         unordered_map<string, double>{{"AAPL", 0.6}, {"INTC", -0.3}},
         "蘋果公司（Apple Inc.）在 11 月發佈首款搭載自研 M1 晶片的 Mac 電腦，標誌著從英特爾（Intel）處理器過渡的開始，提升產品性能和能效",
-        0.1,  // AAPL 積極影響；INTC 負面影響
+        0.1 * EVENT_IMPACT_PARAMETER,  // AAPL 積極影響；INTC 負面影響
         "Tech Industry Reports"
     );
 
@@ -122,15 +123,15 @@ int main() {
     events.emplace_back(
         unordered_map<string, double>{{"TSM", -0.5}, {"MSFT", -0.2}, {"AAPL", -0.2}},
         "全球半導體需求激增，導致供應鏈緊張，晶圓代工產能供不應求，影響相關企業的生產計劃",
-        0.09,  // 供應鏈緊張對大部分企業是負面影響
+        0.09 * EVENT_IMPACT_PARAMETER,  // 供應鏈緊張對大部分企業是負面影響
         "Industry Reports"
     );
 
     // 回合五 事件3: 全球股市強勁反彈
     events.emplace_back(
-        unordered_map<string, double>{{"AAPL", 0.6}, {"MSFT", 0.6}, {"UBER", 0.6}, {"MRNA", 0.6}, {"COST", 0.6}, {"KO", 0.6}, {"TSM", 0.6}, {"INTC", 0.6}, {"UAL", 0.6}, {"DAL", 0.6}}, // "ALL" 代表全體股票
+        unordered_map<string, double>{{"AAPL", 1}, {"MSFT", 1}, {"UBER", 1}, {"MRNA", 1}, {"COST", 1}, {"KO", 1}, {"TSM", 1}, {"INTC", 1}, {"UAL", 1}, {"DAL", 1}}, // "ALL" 代表全體股票
         "受疫苗研發進展和經濟刺激政策影響，全球股市在 11 月出現強勁反彈，投資者信心回升",
-        0.08,  // 正面影響
+        0.2 * EVENT_IMPACT_PARAMETER,  // 正面影響
         "Global Market News"
     );
 
@@ -138,7 +139,7 @@ int main() {
     events.emplace_back(
         unordered_map<string, double>{{"MSFT", -0.3}, {"AAPL", -0.3}, {"DAL", -0.2}, {"UBER", -0.2}},
         "一家大型投資機構的人工智慧交易系統發生異常，短時間內觸發大量拋售指令，導致市場短暫性暴跌。事件後市場迅速恢復，但部分個股受影響較大",
-        0.05,  // 負面影響
+        0.05 * EVENT_IMPACT_PARAMETER,  // 負面影響
         "Market Watch Reports"
     );
 
@@ -146,7 +147,7 @@ int main() {
     events.emplace_back(
         unordered_map<string, double>{{"MRNA", 0.6}, {"UAL", 0.4}, {"DAL", 0.4}, {"COST", 0.3}, {"KO", 0.3}},
         "全球多國加速疫苗接種，經濟重啟進程加快，市場對經濟復甦的信心增強，帶動整體市場反彈",
-        0.1,  // 正面影響
+        0.1 * EVENT_IMPACT_PARAMETER,  // 正面影響
         "Global Health Reports"
     );
 
@@ -154,15 +155,15 @@ int main() {
     events.emplace_back(
         unordered_map<string, double>{{"MSFT", -0.4}, {"TSM", -0.1}, {"AAPL", -0.2}, {"COST", -0.2}},
         "一家主要的虛擬貨幣交易所遭受大規模駭客攻擊，引發市場對數字資產的恐慌性拋售，部分科技公司股價受到拖累",
-        0.07,  // 負面影響
+        0.07 * EVENT_IMPACT_PARAMETER,  // 負面影響
         "Crypto Market News"
     );
 
     // 回合七 事件1: 台積電宣布全球擴張計劃
     events.emplace_back(
-        unordered_map<string, double>{{"TSM", 0.5}, {"INTC", -0.5}},
+        unordered_map<string, double>{{"TSM", 1.0}, {"INTC", -0.5}},
         "台積電（TSMC）宣布未來三年內在全球建造六座新廠，擴大產能以應對晶片短缺問題",
-        0.1,  // 正面影響
+        0.14 * EVENT_IMPACT_PARAMETER,  // 正面影響
         "Tech Industry Reports"
     );
 
@@ -170,7 +171,7 @@ int main() {
     events.emplace_back(
         unordered_map<string, double>{{"AAPL", -0.2}, {"MSFT", -0.2}, {"COST", -0.2}},
         "一場大規模的網絡攻擊癱瘓了多家主要供應鏈公司的系統，導致產品交付延遲，影響多個行業",
-        0.06,  // 負面影響
+        0.06 * EVENT_IMPACT_PARAMETER,  // 負面影響
         "Global Security News"
     );
 
@@ -178,15 +179,15 @@ int main() {
     events.emplace_back(
         unordered_map<string, double>{{"AAPL", 0.4}, {"KO", -0.2}},
         "一款革命性的新型可穿戴健康設備在市場上引發熱潮，消費者爭相購買，帶動相關公司的銷售增長",
-        0.07,  // 正面影響
+        0.07 * EVENT_IMPACT_PARAMETER,  // 正面影響
         "Consumer Market Reports"
     );
 
     // 回合八 事件1: 英特爾宣布新建晶圓代工廠
     events.emplace_back(
-        unordered_map<string, double>{{"INTC", 0.7}, {"TSM", -0.4}, {"MSFT", -0.2}},
+        unordered_map<string, double>{{"INTC", 0.9}, {"TSM", -0.4}, {"MSFT", -0.2}},
         "英特爾（Intel）宣布在美國亞利桑那州新建兩座先進晶圓代工廠，投資 200 億美元，旨在挑戰台積電（TSMC）和三星在晶圓代工市場的領導地位",
-        0.1,  // 正面影響
+        0.12 * EVENT_IMPACT_PARAMETER,  // 正面影響
         "Tech Industry Reports"
     );
 
@@ -194,7 +195,7 @@ int main() {
     events.emplace_back(
         unordered_map<string, double>{{"INTC", 0.8}, {"TSM", -0.5}},
         "英特爾宣布其新一代製程技術成功達到 3nm 水平，對其晶圓代工業務具有里程碑意義，但量產仍需時間",
-        0.08,  // 穩定正面影響
+        0.1 * EVENT_IMPACT_PARAMETER,  // 穩定正面影響
         "Industry News"
     );
 
@@ -202,7 +203,7 @@ int main() {
     events.emplace_back(
         unordered_map<string, double>{{"MRNA", -0.8}, {"UAL", -0.5}, {"DAL", -0.5}, {"COST", 0.3}, {"KO", 0.3}},
         "多起疫苗接種引發的死亡案例，使得全球出現對疫苗安全性質疑的聲音，疫苗接種率下降，導致疫情反彈，經濟復甦放緩",
-        0.1,  // 負面影響
+        0.1 * EVENT_IMPACT_PARAMETER,  // 負面影響
         "Global Health Watch"
     );
 
@@ -210,15 +211,15 @@ int main() {
     events.emplace_back(
         unordered_map<string, double>{{"INTC", 0.8}, {"TSM", -0.5}},
         "英特爾（Intel）成功以 300 億美元收購格羅方德（GlobalFoundries），大幅提升其晶圓代工產能及良率，進一步挑戰台積電（TSMC）的市場地位",
-        0.1,  // 正面影響
+        0.12 * EVENT_IMPACT_PARAMETER,  // 正面影響
         "Tech Industry Reports"
     );
 
     // 回合九 事件2: 疫苗接種率下降導致疫情反彈
     events.emplace_back(
-        unordered_map<string, double>{{"MRNA", 0.6}, {"UAL", 0.5}, {"DAL", 0.5}, {"COST", -1.4}, {"KO", -1.2}},
+        unordered_map<string, double>{{"MRNA", -0.6}, {"UAL", -0.3}, {"DAL", -0.3}, {"COST", 0.8}, {"KO", 0.8}},
         "由於對疫苗安全性的質疑，全球疫苗接種率下降，導致 COVID-19 疫情反彈，各國重新實施封鎖措施，經濟復甦受阻，資金流入表現較穩定的股票避險",
-        0.1,  // 負面影響
+        0.1 * EVENT_IMPACT_PARAMETER,  // 負面影響
         "Global Health Watch"
     );
 
@@ -226,15 +227,15 @@ int main() {
     events.emplace_back(
         unordered_map<string, double>{{"AAPL", 0.7}, {"MSFT", 0.7}, {"TSM", 0.4}},
         "受遠端工作模式的延續和數位轉型加速影響，科技公司在多個領域的業務保持高速增長，市場看好未來發展",
-        0.08,  // 穩定正面影響
+        0.15 * EVENT_IMPACT_PARAMETER,  // 穩定正面影響
         "Tech Market Analysis"
     );
 
     // 最後一回合 事件1: 英特爾超越台積電，成為全球最大晶圓代工廠
     events.emplace_back(
-        unordered_map<string, double>{{"INTC", 1.0}, {"TSM", -1.0}},
+        unordered_map<string, double>{{"INTC", 1.0}, {"TSM", -0.8}},
         "收購格羅方德後，3奈米製程良率持續成長，英特爾（Intel）成功搶到大筆客戶訂單，超越台積電（TSMC），成為全球最大的晶圓代工廠，吸引大量客戶轉單",
-        0.14,  // 強烈正面影響
+        0.18 * EVENT_IMPACT_PARAMETER,  // 強烈正面影響
         "Tech Market Reports"
     );
 
@@ -242,7 +243,7 @@ int main() {
     events.emplace_back(
         unordered_map<string, double>{{"UBER", -0.6}},
         "Uber 公布最新財報，顯示出行需求未如預期恢復，導致收入低於市場預期，股價下跌",
-        0.05,  // 輕微負面影響
+        0.05 * EVENT_IMPACT_PARAMETER,  // 輕微負面影響
         "Financial News"
     );
 
@@ -250,7 +251,7 @@ int main() {
     events.emplace_back(
         unordered_map<string, double>{{"UAL", 0.8}, {"DAL", 0.8}, {"MRNA", -0.6}},
         "台灣開發的新型 COVID-19 疫苗橫空出世，對變種病毒高度有效，通過各國監管機關認證，施打狀況良好，使得各國放寬旅遊限制，航空業需求回升",
-        0.1,  // 穩定正面影響
+        0.1 * EVENT_IMPACT_PARAMETER,  // 穩定正面影響
         "Global Health Reports"
     );
 
@@ -268,12 +269,17 @@ int main() {
         {"DAL", Stock("DAL", "Delta Air Lines", "Airlines", 45, "作為航空業龍頭之一，疫苗普及推動旅遊需求回升，但挑戰依然存在", 1.2)}
     };
 
-    // // 打印所有事件的詳情
-    // for (const auto& event : events) {
-    //     event.printEventDetails();
-    //     cout << "------------------" << endl;
-    // }
+    // 打印所有事件的詳情
+    for(auto& event : events) {
+        event.affectStockPrice(stockMap);
+        cout << "------------------" << endl;
+    }
 
+    // 打印所有股價的詳情
+    for (const auto& [ticker, stock] : stockMap) {
+        stock.printStockInfo();
+        cout << "------------------" << endl;
+    }
 
     return 0;
 }

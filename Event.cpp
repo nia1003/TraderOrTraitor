@@ -40,6 +40,9 @@ void Event::affectStockPrice(unordered_map<string, Stock>& stockMap) {
             p.second.setCurrentPrice(newPrice);
             cout << "Updated " << p.first << " from " << oldPrice
                     << " to new price: " << newPrice << endl;
+
+            // 更新股價
+            p.second.addToPriceHistory(oldPrice);
         }
     }
 }

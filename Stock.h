@@ -42,6 +42,7 @@ public:
    int getPriceLastRound() const;
    double getSensitivity() const {return sensitivity;}
    string getName() const {return name;}
+   string getTicker() const {return ticker;}
 
    // print股票資訊
    void printStockInfo() const;

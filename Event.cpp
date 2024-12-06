@@ -14,8 +14,8 @@ void Event::printEventDetails() const {
 
     if (!impactWeight.empty()) {
         cout << "影響範圍與權重: " << endl;
-        for (const auto& [ticker, weight] : impactWeight) {
-            cout << "  " << ticker << ": " << weight << endl;
+        for (const auto& p : impactWeight) {
+            cout << "  " << p.first << ": " << p.second << endl;
         }
     } else {
         cout << "影響範圍: 無" << endl;
@@ -27,18 +27,18 @@ void Event::printEventPartialDetails() const {
 }
 // 影響股價的函數
 void Event::affectStockPrice(unordered_map<string, Stock>& stockMap) {
-    for (auto& [ticker, stock] : stockMap) { // 可能會有衝突
+    for (auto& p : stockMap) { // 可能會有衝突
         // 確定這支股票是否受影響
-        if (impactWeight.count(ticker)) {
-            double weight = impactWeight[ticker];
-            int newPrice = stock.getCurrentPrice() *
-                                (1 + stock.getSensitivity() * eventImpact * weight);
-            int oldPrice = stock.getCurrentPrice();
+        if (impactWeight.count(p.first)) {
+            double weight = impactWeight[p.first];
+            int newPrice = p.second.getCurrentPrice() *
+                                (1 + p.second.getSensitivity() * eventImpact * weight);
+            int oldPrice = p.second.getCurrentPrice();
 
             // 更新股價
-            cout << ticker << "," << stock.getSensitivity() << "," << eventImpact << "," << weight << endl;
-            stock.setCurrentPrice(newPrice);
-            cout << "Updated " << ticker << " from " << oldPrice
+            cout << p.first << "," << p.second.getSensitivity() << "," << eventImpact << "," << weight << endl;
+            p.second.setCurrentPrice(newPrice);
+            cout << "Updated " << p.first << " from " << oldPrice
                     << " to new price: " << newPrice << endl;
         }
     }

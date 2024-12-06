@@ -47,9 +47,11 @@ string Character::showSkills() const {
 }
 
 string Character::showIntroduction() const {
-    // 展示身分、名字、介紹，身分由各子類加入
-    string info = "名字： " + this->name + "\n    " + this->description + "\n"; // 縮排四格
-    return info;
+    // 展示名字、介紹、總資產
+    stringstream info; 
+    info << "名字： " + this->name + "\n    " + this->description + "\n"; // 縮排四格
+    info << "總資產" << this->getTotalAsset() << "\n";
+    return info.str();
 }
 
 string Character::showFinancialStatus() const {
@@ -167,12 +169,11 @@ void Player::takeAction(Stage& stage, const Round& round) {
                 break;
 
             case 2: {
-                cout << "輸入角色編號\n";
+                cout << "輸入想查看的角色編號: 1 ~ " << stage.characters.size() << "\n";
                 int id;
                 cin >> id;
                 try{
-                    Character* she = stage.characters.at(id - 1);
-                    cout << she->showIntroduction() << "總資產" << she->getTotalAsset() << "\n";
+                    cout << stage.characters.at(id - 1)->showIntroduction();
                 } catch (out_of_range& e) {
                     cerr << "不存在的角色編號：" + to_string(id) + "\n";
                 }

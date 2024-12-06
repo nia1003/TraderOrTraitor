@@ -6,6 +6,7 @@
 
 class Character;
 class Event;
+class Stock;
 struct Stage;
 struct Round;
 
@@ -15,9 +16,11 @@ struct Result {
     string strVal;
     double doubleVal;
     Event* eventPtr;
+    Stock* stockPtr;
 
     Result() { ok = false; }
-    Result(const string& s, double d=-100 , Event* e=nullptr) : strVal(s), doubleVal(d), eventPtr(e) { ok = true; }
+    Result(const string& str, double d=-100 , Event* e=nullptr, Stock* s=nullptr) : 
+        strVal(str), doubleVal(d), eventPtr(e), stockPtr(s) { ok = true; }
 };
 
 class Skill{

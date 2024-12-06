@@ -61,6 +61,21 @@ Result InsideScoop::activate(Stage& stage, Character& cha) const {
     return Result(events[eventId]->description, -100, events[eventId]);
 }
 
-Result Peek::activate(Stage& stage, Character& cha) const {
 
+
+Result Peek::activate(Stage& stage, Character& cha) const {
+    // 玩家特有技能
+    while(true){
+        cout << "輸入想查看的角色編號: 1 ~ " << stage.characters.size() << "\n";
+        int id;
+        cin >> id;
+        try{
+            Character* she = stage.characters.at(id - 1);
+            return Result(she->showIntroduction() + 
+                    she->showFinancialStatus() +
+                    she->showActionLog());
+        } catch (out_of_range& e) {
+            cerr << "不存在的角色編號：" + to_string(id) + "\n";
+        }
+    }
 }

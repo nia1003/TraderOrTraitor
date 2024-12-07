@@ -11,10 +11,13 @@
 
 using namespace std;
 
-friend Insider;
+
 
 class Event{
-    
+
+friend InsideScoop;
+friend Insider; 
+
 private:
     unordered_map<string, double> impactWeight; 
     /* 

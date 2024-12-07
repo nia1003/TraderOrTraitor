@@ -9,6 +9,9 @@
 using namespace std;
 
 class Stock{
+
+friend Foresight;
+
 private:
     string ticker; // 股票的代碼
     string name; // 股票名稱
@@ -43,6 +46,7 @@ public:
    double getSensitivity() const {return sensitivity;}
    string getName() const {return name;}
    string getTicker() const {return ticker;}
+   string getIndustry() const {return industry;}
 
    // print股票資訊
    void printStockInfo() const;

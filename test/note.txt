@@ -22,6 +22,6 @@
     () 想好保守投資人的操作邏輯
     (x) 把公式描述得更加清楚(記得用小括號)
     (x) 把股票每回合的價格加入歷史價格中(修改affectStock)
-    (x) 算出個股每回合的價格
-    () Event要friend Insider和InsideScoop
+    () 算出個股每回合的價格+調參數
+    (x) Event要friend Insider和InsideScoop
     () Event拆成一個個的vector，包進round。

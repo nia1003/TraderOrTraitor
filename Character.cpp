@@ -282,7 +282,10 @@ Robot::Robot(const string& t, const string& n, const string& des) : Character(t,
 vector<string> ShortTerm::preferredStocks = {"MRNA", "UBER", "TSM", "INTC", "UAL", "DAL"};
 
 ShortTerm::ShortTerm(const string& n, const string& des) : Robot("ShortTerm", n, des) {
-
+    for(int _ = 0; _ < 2; ++_)
+        this->obtainSkill(Foresight::getId());
+    this->obtainSkill(Hedge::getId());
+    this->obtainSkill(Gamble::getId());
 }
 
 void ShortTerm::takeAction(Stage& stage, const Round& round){

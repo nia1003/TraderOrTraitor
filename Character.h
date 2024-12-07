@@ -136,6 +136,7 @@ class Defensive : public Robot {
 private:
 public:
     Defensive(const string& n, const string& des);
+    void takeAction(Stage&, const Round&) override;
 };
 
 class Insider : public Robot {
@@ -147,6 +148,7 @@ public:
     Insider(const string& ind, const string& n, const string& des);
     void takeAction(Stage&, const Round&) override;
     string getIndustry() { return this->industry; }
+friend class Defensive;
 };
 
 #endif

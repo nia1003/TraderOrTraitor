@@ -281,7 +281,9 @@ Robot::Robot(const string& t, const string& n, const string& des) : Character(t,
 
 vector<string> ShortTerm::preferredStocks = {"MRNA", "UBER", "TSM", "INTC", "UAL", "DAL"};
 
-ShortTerm::ShortTerm(const string& n, const string& des) : Robot("ShortTerm", n, des) {}
+ShortTerm::ShortTerm(const string& n, const string& des) : Robot("ShortTerm", n, des) {
+
+}
 
 void ShortTerm::takeAction(Stage& stage, const Round& round){
     // 準備檢查持股
@@ -299,6 +301,11 @@ void ShortTerm::takeAction(Stage& stage, const Round& round){
                 this->tradeStocks(stage, r.stockTicker, 4, true);
             } catch (runtime_error&) {}
         }
+    } else if (curRound == 8) {
+        this->useSkill(stage, 1);
+    } else if (curRound == 10){
+        if(this->getTotalAsset() <= stage.characters[0]->getTotalAsset() - 200)
+            this->useSkill(stage, 1);
     }
 
     while(this->actionCnt > 0) {
@@ -373,6 +380,11 @@ void LongTerm::takeAction(Stage& stage, const Round& round) {
         }
     }
 }
+
+Defensive::Defensive(const string& n, const string& des) : Robot("Defensive", n, des) {
+
+}
+
 
 const unordered_map<string, vector<string>> Insider::industryToTickers = {
     {"Technology", {"AAPL", "UBER", "MSFT"}},

@@ -42,7 +42,7 @@ int main() {
 
     // 回合二 事件1：COVID-19 疫情爆發
     events.emplace_back(
-        unordered_map<string, double>{{"AAPL", -1.0}, {"MSFT", -1.0}, {"UBER", -1.0}, {"MRNA", -1.0}, {"COST", -1.0}, {"KO", -1.0}, {"TSM", -1.0}, {"INTC", -1.0}, {"UAL", -1.0}, {"DAL", -1.0}}, // 使用 "ALL" 表示全體股票
+        unordered_map<string, double>{{"AAPL", -1.0}, {"MSFT", -1.0}, {"UBER", -1.0}, {"MRNA", -0.2}, {"COST", -1.0}, {"KO", -1.0}, {"TSM", -1.0}, {"INTC", -1.0}, {"UAL", -1.0}, {"DAL", -1.0}}, // 使用 "ALL" 表示全體股票
         "COVID-19 疫情在全球範圍內迅速蔓延，各國實施封鎖措施，對經濟活動造成重大影響，導致市場普遍恐慌，全體股價出現劇烈下跌",
         0.2 * EVENT_IMPACT_PARAMETER,  // 強烈負面影響
         "World Health Organization"
@@ -74,7 +74,7 @@ int main() {
 
     // 回合三 事件2: 疫苗研發取得進展
     events.emplace_back(
-        unordered_map<string, double>{{"MRNA", 1.0}, {"UBER", 0.4}},
+        unordered_map<string, double>{{"MRNA", 1.0}, {"UBER", 0.4}, {"UAL", 0.4}, {"DAL", 0.4}},
         "生技公司在 COVID-19 疫苗研發上取得重要進展，進入臨床試驗階段",
         0.12 * EVENT_IMPACT_PARAMETER,  // 強烈正面影響
         "Health Reports"
@@ -146,7 +146,7 @@ int main() {
 
     // 回合六 事件2: 疫苗接種計劃進展迅速
     events.emplace_back(
-        unordered_map<string, double>{{"MRNA", 0.6}, {"UAL", 0.4}, {"DAL", 0.4}, {"COST", 0.3}, {"KO", 0.3}},
+        unordered_map<string, double>{{"MRNA", 0.6}, {"UBER", 0.4}, {"UAL", 0.4}, {"DAL", 0.4}, {"COST", 0.3}, {"KO", 0.3}},
         "全球多國加速疫苗接種，經濟重啟進程加快，市場對經濟復甦的信心增強，帶動整體市場反彈",
         0.1 * EVENT_IMPACT_PARAMETER,  // 正面影響
         "Global Health Reports"
@@ -202,7 +202,7 @@ int main() {
 
     // 回合八 事件3: 疫苗接種率下降，經濟復甦受阻
     events.emplace_back(
-        unordered_map<string, double>{{"MRNA", -0.8}, {"UAL", -0.5}, {"DAL", -0.5}, {"COST", 0.3}, {"KO", 0.3}},
+        unordered_map<string, double>{{"MRNA", -0.8}, {"UBER", -0.5}, {"UAL", -0.5}, {"DAL", -0.5}, {"COST", 0.3}, {"KO", 0.3}},
         "多起疫苗接種引發的死亡案例，使得全球出現對疫苗安全性質疑的聲音，疫苗接種率下降，導致疫情反彈，經濟復甦放緩",
         0.1 * EVENT_IMPACT_PARAMETER,  // 負面影響
         "Global Health Watch"
@@ -226,7 +226,7 @@ int main() {
 
     // 回合九 事件3: 科技行業持續領跑經濟
     events.emplace_back(
-        unordered_map<string, double>{{"AAPL", 0.7}, {"MSFT", 0.7}, {"TSM", 0.4}},
+        unordered_map<string, double>{{"AAPL", 0.7}, {"MSFT", 0.7}, {"TSM", 0.4}, {"UBER", 0.4}},
         "受遠端工作模式的延續和數位轉型加速影響，科技公司在多個領域的業務保持高速增長，市場看好未來發展",
         0.15 * EVENT_IMPACT_PARAMETER,  // 穩定正面影響
         "Tech Market Analysis"
@@ -240,7 +240,7 @@ int main() {
         "Tech Market Reports"
     );
 
-    // 最後一回合 事件2: Uber 公布財報，業績不佳
+    // 最後一回合 事件2: Uber 公布上一季財報，業績不佳
     events.emplace_back(
         unordered_map<string, double>{{"UBER", -0.6}},
         "Uber 公布最新財報，顯示出行需求未如預期恢復，導致收入低於市場預期，股價下跌",
@@ -248,9 +248,9 @@ int main() {
         "Financial News"
     );
 
-    // 最後一回合 事件3: 新疫苗問世，航空業回暖
+    // 最後一回合 事件3: 新疫苗問世，航空、運輸業回暖
     events.emplace_back(
-        unordered_map<string, double>{{"UAL", 0.8}, {"DAL", 0.8}, {"MRNA", -0.6}},
+        unordered_map<string, double>{{"UBER", 0.8}, {"UAL", 0.8}, {"DAL", 0.8}, {"MRNA", -0.6}},
         "台灣開發的新型 COVID-19 疫苗橫空出世，對變種病毒高度有效，通過各國監管機關認證，施打狀況良好，使得各國放寬旅遊限制，航空業需求回升",
         0.1 * EVENT_IMPACT_PARAMETER,  // 穩定正面影響
         "Global Health Reports"

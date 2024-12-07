@@ -11,7 +11,8 @@
 
 using namespace std;
 
-
+class InsideScoop;
+class Insider;
 
 class Event{
 

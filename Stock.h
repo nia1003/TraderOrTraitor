@@ -6,6 +6,8 @@
 #include <vector>
 #include "Event.h"
 
+class Foresight;
+
 using namespace std;
 
 class Stock{

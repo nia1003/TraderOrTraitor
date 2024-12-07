@@ -15,6 +15,7 @@ using namespace std;
 
 class Character;
 struct Stage;
+class Event;
 
 struct Round {
     vector<Event*> events;

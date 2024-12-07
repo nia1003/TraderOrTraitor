@@ -45,8 +45,9 @@ string Character::showSkills() const {
     stringstream ss;
     ss << "持有技能：\n";
     for(int i = 0; i < skills.size(); ++i){
-        ss << i + 1 << ": " << skills[i]->getName() << '\n';
+        ss << i + 1 << ": " << skills[i]->getName() << "  ";
     }
+    ss << '\n';
     return ss.str();
 }
 
@@ -69,18 +70,19 @@ string Character::showFinancialStatus() const {
     else {
         info << '\n';
         for(const auto& pair: this->assets) 
-            info << "    " << pair.second.stock->getName() << " X " << pair.second.number << "持股回合數：" << pair.second.roundCnt << "\n";
+            info << "    " << pair.second.stock->getTicker() << " X " << pair.second.number << "  持股回合數：" << pair.second.roundCnt << "\n";
     }
     return info.str();
 }
 
 string Character::showActionLog() const {
     if(this->actionLog.empty())
-        return "尚無操作紀錄";
+        return "尚無操作紀錄\n";
 
     stringstream ss;
     for(const string& record: this->actionLog)
         ss << record << "\n";
+    return ss.str();
 }
 
 int Character::tradeStocks(const Stage& stage, const string& ticker, int number, bool isbuy) {
@@ -142,9 +144,9 @@ Result Character::useSkill(Stage& stage, int skillId) {
     if(this->actionCnt < 2 && takes2action.count(theSkill->getName()))
         throw runtime_error(theSkill->getName() + "需要兩次操作次數才能發動");
 
-    Result result = theSkill->activate(stage, *this);
+    Result result = theSkill->activate(stage, *this); // may throw runtime_error
 
-    this->actionLog.push_back("使用技能：" + theSkill->getName());
+    this->actionLog.push_back("使用了技能：" + theSkill->getName());
     this->skills.erase(this->skills.begin() + skillId - 1);
     --this->actionCnt;
     return result;
@@ -217,12 +219,12 @@ void Player::takeAction(Stage& stage, const Round& round) {
                 cin >> id;
                 try{
                     cout << this->useSkill(stage, id).strVal << "\n";
+                    cout << "您" << this->actionLog.back() << '\n';
                 } catch (out_of_range& e) {
                     cerr << "不存在的技能編號：" + to_string(id) + "\n";
                 } catch (runtime_error& e) {
                     cerr << e.what() << '\n';
                 }
-                cout << this->actionLog.back() << '\n';
                 break;
             }
                 
@@ -236,10 +238,10 @@ void Player::takeAction(Stage& stage, const Round& round) {
 
                 try {
                     this->tradeStocks(stage, ticker, number, buy);
+                    cout << "您" << this->actionLog.back() << '\n';
                 } catch (exception& e) {
                     cerr << e.what() << '\n';
                 }
-                cout << this->actionLog.back() << '\n';
                 break;
             }
 
@@ -311,7 +313,6 @@ void ShortTerm::takeAction(Stage& stage, const Round& round){
     }
 
     while(this->actionCnt > 0) {
-        cout << "短線進while迴圈了\n";
         if(tickerIdx == myStocks.size()) {
             // 買入波動大的股票
             string target = ShortTerm::preferredStocks[randomInt(0, ShortTerm::preferredStocks.size() - 1)];
@@ -325,8 +326,6 @@ void ShortTerm::takeAction(Stage& stage, const Round& round){
                     if(num == 1)
                         return;
                     num /= 2;
-                } catch (exception& e) {
-                    cerr << "其他錯誤!" << e.what();
                 }
             }
         } else {
@@ -352,8 +351,8 @@ void ShortTerm::takeAction(Stage& stage, const Round& round){
                 ++tickerIdx;
             }
         }
-// cout << this->actionLog.back() << '\n';
     }
+    cout << this->name << "行動完畢\n";
 }
 
 
@@ -387,10 +386,11 @@ void LongTerm::takeAction(Stage& stage, const Round& round) {
             }
         } else {
             string target = randomStock<Asset>(this->assets);
-            int num = this->assets[target].number / 3;
+            int num = this->assets[target].number / 4;
             this->tradeStocks(stage, target, num, false);
         }
     }
+    cout << this->name << "行動完畢\n";
 }
 
 Defensive::Defensive(const string& n, const string& des) : Robot("Defensive", n, des) {
@@ -409,8 +409,9 @@ void Defensive::takeAction(Stage& stage, const Round& round) {
             while (true){
                 try{
                     this->tradeStocks(stage, ticker, num, true);
+                    break;
                 } catch (runtime_error& e) {
-                    if(num == 1) continue;
+                    if(num == 1) break;
                     num /= 2;
                 }
             }
@@ -447,6 +448,7 @@ void Defensive::takeAction(Stage& stage, const Round& round) {
             this->tradeStocks(stage, ticker, this->assets[ticker].number / 3, false);
         }
     }
+    cout << this->name << "行動完畢\n";
 }
 
 
@@ -505,7 +507,7 @@ void Insider::takeAction(Stage& stage, const Round& round) {
 
     // 剩下次數的操作
     while(this->actionCnt > 0) {
-        if(this->currentMoney > this->initMoney / 5){
+        if(this->currentMoney > this->initMoney / 8){
             int num = 13;
             for(const string& ticker: this->industryStock) {
                 while(true){
@@ -526,4 +528,5 @@ void Insider::takeAction(Stage& stage, const Round& round) {
             this->tradeStocks(stage, target, num, false);
         }
     }
+    cout << this->name << "行動完畢\n";
 }

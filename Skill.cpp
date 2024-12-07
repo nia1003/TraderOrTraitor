@@ -1,6 +1,7 @@
 #include "Skill.h"
 #include "RandomInt.h"
 #include <unordered_set>
+#include <stdexcept>
 using namespace std;
 
 Result Foresight::activate(Stage& stage, Character& cha) const {
@@ -12,11 +13,11 @@ Result Foresight::activate(Stage& stage, Character& cha) const {
     }
     // 隨機找個股，查看其價格陣列
     string ticker = randomStock(stage.stocks);
-    int nextPrice = Stage::price_per_round.at(ticker)[curRound];
-    int curPrice = Stage::price_per_round.at(ticker)[curRound - 1];
+    int nextPrice = Stage::price_per_round.at(ticker)[curRound + 1];
+    int curPrice = Stage::price_per_round.at(ticker)[curRound];
     
     double changeRate = static_cast<double>(nextPrice) / curPrice;
-    changeRate = round(changeRate * 100) / 100;
+    changeRate = round(changeRate * 100) / 100 - 1;
     return Result(ticker + "在下回合將迎來" + to_string(changeRate) + "的價格變動", changeRate, nullptr, ticker);
 }
 
@@ -64,6 +65,9 @@ Result AssetGrowth::activate(Stage& stage, Character& cha) const {
 }
 
 Result Hedge::activate(Stage& stage, Character& cha) const {
+    if(cha.assets.empty())
+        throw runtime_error("您未持有任何股票，無法使用" + this->getName());
+
     // 找出持股產業數量，算出倍率
     unordered_set<string> industrySet;
     for(const auto& p: cha.assets){
@@ -132,6 +136,9 @@ Result InsideScoop::activate(Stage& stage, Character& cha) const {
 }
 
 Result Gamble::activate(Stage& stage, Character& cha) const {
+    if(cha.assets.empty())
+        throw runtime_error("您未持有任何股票，無法使用" + this->getName());
+
     int money;
     if(cha.isPlayer()){
         while(true){

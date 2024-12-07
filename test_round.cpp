@@ -70,14 +70,14 @@ int main() {
     Character* testDef = new Defensive("測試用保守", "喜歡保守投資");
     Character* testIn = new Insider("Technology", "測試用內部", "內部人員");
 
-    for(int i = 0; i < 10; ++i)
-        testPlayer->obtainSkill(Peek::getId());
+    for(int i = 0; i < 6; ++i)
+        testPlayer->obtainSkill(i);
     Stage testStage(testStocks, testRound);
     testStage.characters.push_back(testPlayer);
     testStage.characters.push_back(testShort);
-    // testStage.characters.push_back(testLong);
-    // testStage.characters.push_back(testDef);
-    // testStage.characters.push_back(testIn);
+    testStage.characters.push_back(testLong);
+    testStage.characters.push_back(testDef);
+    testStage.characters.push_back(testIn);
 
 
     testStage.startStage();

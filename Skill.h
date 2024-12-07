@@ -17,6 +17,7 @@ struct Result {
     Event* eventPtr;
     string stockTicker;
 
+    Result() {}
     Result(const string& str, double d=-100 , Event* e=nullptr, string s="") : 
         strVal(str), doubleVal(d), eventPtr(e), stockTicker(s) {}
 };

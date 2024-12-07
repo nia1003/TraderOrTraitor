@@ -1,9 +1,21 @@
 #include "Skill.h"
 #include "RandomInt.h"
-#include <typeinfo> // for std::bad_cast
 #include <unordered_set>
 using namespace std;
 
+Result Foresight::activate(Stage& stage, Character& cha) const {
+    int curRound = stage.getCurRound();
+    if(curRound == 10){
+        int increment = cha.getTotalAsset() * 0.01;
+        cha.currentMoney += increment;
+        return Result("第十回合使用，轉為獲得" + to_string(increment));
+    }
+    // 隨機找個股，查看其價格陣列
+    string ticker = randomStock(stage.stocks);
+    
+    
+    
+}
 
 Result AssetGrowth::activate(Stage& stage, Character& cha) const {
     int maxRoundCnt = 0;
@@ -44,9 +56,58 @@ Result AssetGrowth::activate(Stage& stage, Character& cha) const {
     }
 }
 
-Result InsideScoop::activate(Stage& stage, Character& cha) const {
-    static unordered_set<string> industrySet = {"Technology", "Biotech", "Consumer Staples", "Semiconductor", "Airlines"};
+Result Hedge::activate(Stage& stage, Character& cha) const {
+    // 找出持股產業數量，算出倍率
+    unordered_set<string> industrySet;
+    for(const auto& p: cha.assets){
+       industrySet.insert(p.second.stock->getIndustry());
+    }
+    int magification = (industrySet.size() - 1 < 3) ? industrySet.size() - 1 : 3;
 
+    // 進行交易
+    int money;
+    string ticker;
+    if(cha.isPlayer()){
+        while(true){
+            cout << "輸入欲賣出的股票代碼與數量，中間空1格\n";
+            int number;
+            cin >> ticker >> number;
+
+            try {
+                money = cha.tradeStocks(stage, ticker, number, false);
+                break;
+            } catch (exception& e) {
+                cerr << e.what() << '\n';
+            }
+        }
+    } else {
+        // 找到跌價股中最有價值資產，賣2/3
+        int value = 0;
+        Asset maxAsset;
+        for (const auto& a: cha.assets) {
+            if(a.second.getValue() > value){
+                value = a.second.roundCnt;
+                maxAsset = a.second;
+            }
+        }
+        ticker = maxAsset.stock->getName();
+        money = cha.tradeStocks(stage, ticker, maxAsset.number * 2 / 3, false);
+    }
+    
+    // 判斷是否為跌價股
+    const Stock& theStock = *stage.stocks.at(ticker);
+    if(theStock.getCurrentPrice() < theStock.getPriceLastRound()){
+        int increment = money * magification * 0.5;
+        cha.currentMoney += increment;
+        return Result("賣出跌價股，獲得" + to_string(increment) + "的額外收益");
+    } else {
+        int increment = money * magification * 0.2;
+        cha.currentMoney += increment;
+        return Result("賣出增值或等值股，獲得" + to_string(increment) + "的額外收益");
+    }
+}
+
+Result InsideScoop::activate(Stage& stage, Character& cha) const {
     int curRound = stage.getCurRound();
     if(curRound == 10){
         int increment = cha.getTotalAsset() * 0.01;
@@ -55,13 +116,55 @@ Result InsideScoop::activate(Stage& stage, Character& cha) const {
     }
 
     // 正式找到下回合事件
-    bool eventOccur = false;
     vector<Event*>& events = stage.rounds[curRound].events;
     int eventId =  randomInt(0, events.size() - 1);
     return Result(events[eventId]->description, -100, events[eventId]);
 }
 
+Result Gamble::activate(Stage& stage, Character& cha) const {
+    int money;
+    if(cha.isPlayer()){
+        while(true){
+            cout << "輸入欲賣出的股票代碼與數量，中間空1格\n";
+            string ticker;
+            int number;
+            cin >> ticker >> number;
 
+            try {
+                money = cha.tradeStocks(stage, ticker, number, false);
+                break;
+            } catch (exception& e) {
+                cerr << e.what() << '\n';
+            }
+        }
+    } else {
+        // 找到最有價值資產，全賣光
+        int value = 0;
+        Asset maxAsset;
+        for (const auto& a: cha.assets) {
+            if(a.second.getValue() > value){
+                value = a.second.roundCnt;
+                maxAsset = a.second;
+            }
+        }
+        money = cha.tradeStocks(stage, maxAsset.stock->getName(), maxAsset.number, false);
+    }
+    
+    // 決定成敗
+    int result = randomInt(1, 10);
+    int moneyChange;
+    if(result <= 6){
+        // 成功
+        moneyChange = money * 0.2;
+        cha.currentMoney += moneyChange;
+        return Result("豪賭成功！獲得" + to_string(moneyChange) + "的額外收益");
+    } else {
+        // 失敗
+        moneyChange = money * 0.1;
+        cha.currentMoney -= moneyChange;
+        return Result("豪賭失敗，承擔" + to_string(moneyChange) + "的虧損");
+    }
+}
 
 Result Peek::activate(Stage& stage, Character& cha) const {
     // 玩家特有技能

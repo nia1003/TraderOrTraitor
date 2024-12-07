@@ -32,11 +32,12 @@ public:
 
     // print事件資訊
     void printEventDetails() const;
-    void printEventPartialDetails() const;
+    void printEventPartialDetails() const;    
 
     // 影響股價的函數
     void affectStockPrice(unordered_map<string, Stock>& stockMap);
-
+friend class ShortTerm;
+friend class Insider;
 friend class InsideScoop;
 };
 

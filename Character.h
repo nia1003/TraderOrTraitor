@@ -31,19 +31,15 @@ protected:
     // 各角色的基本資訊
     static const unordered_map<string, int> maxActionCntMap;
     static const unordered_map<string, array<int, 2>> initMoneyRangeMap;
-    static const array<short, 2> tradeLimits; // 買入限制，賣出為一半。0為玩家，1為電腦
-    static vector<Skill> skillList;
-
-    // static int currentId; // 模仿SQL的AUTO_INCREMENT
+    static vector<Skill*> skillList;
 
     // 可能用到的
     int initMoney; // 隨機後的結果
-    int tradeLimit;
+    int buyLimit;
+    int sellLimit;
     string type;
 
     // 身分相關
-    // short id; // served as key in Stage's characters array
-    // ControlType* controlType;
     string name;
     string description;
 
@@ -66,7 +62,7 @@ public:
 
     // 遊戲背後邏輯相關(輔助遊戲進行)
     virtual bool isPlayer() const = 0 ;
-    void obtainSkill(Skill* s) { skills.push_back(s); }
+    void obtainSkill(int);
     int getTotalAsset() const; // currentMoney + Σ(s.num * s.price) for s in stocks
     void resetActionCnt() { this->actionCnt = Character::maxActionCntMap.at(this->type); }
     virtual void takeAction(Stage&, const Round&) = 0; // 實現各自的操作策略
@@ -79,14 +75,18 @@ public:
     string showFinancialStatus() const; // 展示currentMoney、stocks
     string showActionLog() const;
 
+friend class Foresight;
 friend class AssetGrowth;
+friend class Hedge;
 friend class InsideScoop;
+friend class Gamble;
 };
 
 
 // 玩家部分
 class Player : public Character {
 protected:
+    static const array<short, 2> tradeLimits; // 買入、賣出限制。
 public:
     Player(const string& t, const string& n, const string& des);
     virtual ~Player() = default;
@@ -106,11 +106,10 @@ public:
     Rich(const string& n, const string& des);
 };
 
+
 // 機器人部分
 class Robot : public Character {
 protected:
-    template <typename T>
-    string randomStock(const unordered_map<string, T>&);
 public:
     Robot(const string& t, const string& n, const string& des);
     bool isPlayer() const { return false; }

@@ -24,4 +24,11 @@ int randomInt(int min, int max) {
     return randomInt(range);
 }
 
+template <typename T>
+string randomStock(const unordered_map<string, T>& myAssets) {
+    auto it = myAssets.begin();
+    advance(it, randomInt(0, myAssets.size() - 1));
+    return it->first;
+}
+
 #endif

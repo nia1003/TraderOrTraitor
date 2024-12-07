@@ -22,6 +22,7 @@ struct Round {
 
     Round(vector<Event*>& e) : events(e) {}
     void startRound(Stage& stage);
+    void printRound() const;
 };
 
 struct Stage {

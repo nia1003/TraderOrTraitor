@@ -4,6 +4,7 @@
 #include <windows.h>
 #include "../Event.h"
 #include "../Stock.h"
+#include "../src/Stage.h"
 
 const int EVENT_IMPACT_PARAMETER = 2;
 
@@ -14,8 +15,8 @@ int main() {
     SetConsoleCP(CP_UTF8);       // 設定輸入為 UTF-8
     
     vector<Event> events; // 調用的時候注意每回合3個事件，否則會出錯
-    vector<vector<Event>> stage;
-    vector<Event> round_1;
+    vector<Round> rounds;
+
     // 回合一 事件1：新產品發布
     events.emplace_back(
         unordered_map<string, double>{{"AAPL", 0.5}, {"MSFT", 0.3}, {"INTC", 0.2}},
@@ -243,7 +244,7 @@ int main() {
     // 最後一回合 事件2: Uber 公布上一季財報，業績不佳
     events.emplace_back(
         unordered_map<string, double>{{"UBER", -0.6}},
-        "Uber 公布最新財報，顯示出行需求未如預期恢復，導致收入低於市場預期，股價下跌",
+        "Uber 公布上一季財報，顯示出行需求未如預期恢復，導致收入低於市場預期，股價下跌",
         0.05 * EVENT_IMPACT_PARAMETER,  // 輕微負面影響
         "Financial News"
     );
@@ -251,7 +252,7 @@ int main() {
     // 最後一回合 事件3: 新疫苗問世，航空、運輸業回暖
     events.emplace_back(
         unordered_map<string, double>{{"UBER", 0.8}, {"UAL", 0.8}, {"DAL", 0.8}, {"MRNA", -0.6}},
-        "台灣開發的新型 COVID-19 疫苗橫空出世，對變種病毒高度有效，通過各國監管機關認證，施打狀況良好，使得各國放寬旅遊限制，航空業需求回升",
+        "台灣開發的新型 COVID-19 疫苗橫空出世，對變種病毒高度有效，通過各國監管機關認證，施打狀況良好，使得各國放寬旅遊限制，航空業、運輸業需求回升",
         0.1 * EVENT_IMPACT_PARAMETER,  // 穩定正面影響
         "Global Health Reports"
     );
@@ -270,16 +271,17 @@ int main() {
         {"DAL", Stock("DAL", "Delta Air Lines", "Airlines", 45, "作為航空業龍頭之一，疫苗普及推動旅遊需求回升，但挑戰依然存在", 1.2)}
     };
 
-    // 打印所有事件的詳情
-    for(auto& event : events) {
-        event.affectStockPrice(stockMap);
-        cout << "------------------" << endl;
+    // 將事件分配到每個回合
+    for (size_t i = 0; i < events.size(); i += 3) {
+        vector<Event*> currentRound = {&events[i], &events[i + 1], &events[i + 2]};
+        rounds.emplace_back(currentRound);
     }
 
-    // 打印所有股價的詳情
-    for (const auto& [ticker, stock] : stockMap) {
-        stock.printStockInfo();
-        cout << "------------------" << endl;
+    // 測試每個回合的事件
+    for (size_t roundIndex = 0; roundIndex < rounds.size(); ++roundIndex) {
+        cout << "Round " << roundIndex + 1 << ":\n";
+        rounds[roundIndex].printRound();
+        cout << endl;
     }
 
     return 0;

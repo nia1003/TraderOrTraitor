@@ -3,6 +3,7 @@
 
 #include "Character.h"
 #include "Stage.h"
+#include <string>
 
 class Character;
 class Event;

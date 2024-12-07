@@ -180,7 +180,7 @@ void Player::takeAction(Stage& stage, const Round& round) {
                 break;
 
             case 2: {
-                cout << "輸入想查看的角色編號: 1 ~ " << stage.characters.size() << "\n";
+                cout << "輸入想查看的角色編號: 2 ~ " << stage.characters.size() << "\n";
                 int id;
                 cin >> id;
                 try{
@@ -213,7 +213,7 @@ void Player::takeAction(Stage& stage, const Round& round) {
             }
                 
             case 6: {
-                cout << "輸入技能編號\n";
+                cout << "輸入技能編號：1 ~ " << this->skills.size() << "\n";
                 int id;
                 cin >> id;
                 try{
@@ -297,14 +297,14 @@ void ShortTerm::takeAction(Stage& stage, const Round& round){
     int tickerIdx = 0;
 
     int curRound = stage.getCurRound();
-    if(curRound == 4 || curRound == 6){
+    if (curRound == 4 || curRound == 6) {
         Result r = this->useSkill(stage, 1);
         if(r.doubleVal > 0.05){
             try{
                 this->tradeStocks(stage, r.stockTicker, 4, true);
             } catch (runtime_error&) {}
         }
-    } else if (curRound == 8) {
+    } else if (curRound == 7) {
         this->useSkill(stage, 1);
     } else if (curRound == 10){
         if(this->getTotalAsset() <= stage.characters[0]->getTotalAsset() - 200)
@@ -313,7 +313,7 @@ void ShortTerm::takeAction(Stage& stage, const Round& round){
 
     while(this->actionCnt > 0) {
         if(tickerIdx == myStocks.size()) {
-            // 買入波動大股票
+            // 買入波動大的股票
             string target = ShortTerm::preferredStocks[randomInt(0, preferredStocks.size())];
             int num = randomInt(6, 8);
             while(true){
@@ -385,7 +385,59 @@ void LongTerm::takeAction(Stage& stage, const Round& round) {
 }
 
 Defensive::Defensive(const string& n, const string& des) : Robot("Defensive", n, des) {
+    for(int _ = 0; _ < 3; ++_)
+        this->obtainSkill(Hedge::getId());
+}
 
+void Defensive::takeAction(Stage& stage, const Round& round) {
+    int curRound = stage.getCurRound();
+    if (curRound == 1) {
+        for(const auto& p: Insider::industryToTickers){
+            // 隨機買入不同產業(除了biotech)股票各11張
+            if(p.first[0] == 'B') continue;
+            string ticker = p.second[randomInt(0, p.second.size())];\
+            int num = 11;
+            while (true){
+                try{
+                    this->tradeStocks(stage, ticker, num, true);
+                } catch (runtime_error& e) {
+                    if(num == 1) continue;
+                    num /= 2;
+                }
+            }
+        }
+    } else if (curRound == 2 || curRound == 4 || curRound == 7) {
+        this->useSkill(stage, 1);
+    }
+
+    // 找出事件中影響為正的個股
+    vector<string> posStockTickers;
+    posStockTickers.reserve(10);
+    for(const auto& event: round.events){
+        for(const auto& p: event->impactWeight){
+            if(p.second > 0)
+                posStockTickers.push_back(p.first);
+        }
+    }
+
+    while (this->actionCnt > 0) {
+        if (this->currentMoney > this->initMoney / 5) {
+            // 隨機買入事件中影響為正的個股
+            string ticker = posStockTickers[randomInt(0, posStockTickers.size() - 1)];
+             int num = 6;
+            while (true){
+                try{
+                    this->tradeStocks(stage, ticker, num, true);
+                } catch (runtime_error& e) {
+                    if(num == 1) continue;
+                    num /= 2;
+                }
+            }
+        } else {
+            string ticker = randomStock<Asset>(this->assets);
+            this->tradeStocks(stage, ticker, this->assets[ticker].number / 3, false);
+        }
+    }
 }
 
 
@@ -401,7 +453,7 @@ Insider::Insider(const string& ind, const string& n, const string& des) : indust
     this->industryStock = Insider::industryToTickers.at(this->industry);
     for(int _ = 0; _ < 2; ++_)
         this->obtainSkill(InsideScoop::getId());
-    this->obtainSkill(Hedge::getId());
+    this->obtainSkill(AssetGrowth::getId());
     this->obtainSkill(Gamble::getId());
 }
 
@@ -415,7 +467,7 @@ void Insider::takeAction(Stage& stage, const Round& round) {
         double changeRate = r.eventPtr->impactWeight[ticker];
         if(changeRate > 0){
             // 買入
-            int num = 13;
+            int num = 5;
             while(true){
                 try {
                     this->tradeStocks(stage, ticker, num, true);
@@ -423,7 +475,7 @@ void Insider::takeAction(Stage& stage, const Round& round) {
                 } catch (runtime_error& e) {
                     // 資金不足
                     if(num == 1)
-                        return;
+                        break;
                     num /= 2;
                 }
             }
@@ -454,7 +506,7 @@ void Insider::takeAction(Stage& stage, const Round& round) {
                     } catch (runtime_error& e) {
                         // 資金不足
                         if(num == 1)
-                            return;
+                            break;
                         num /= 2;
                     }
                 }

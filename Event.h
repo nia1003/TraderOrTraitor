@@ -9,6 +9,8 @@
 
 using namespace std;
 
+class Stock;
+
 class Event{
 private:
     unordered_map<string, double> impactWeight; 
@@ -36,7 +38,7 @@ public:
 
     // 影響股價的函數
     void affectStockPrice(unordered_map<string, Stock>& stockMap);
-friend class ShortTerm;
+friend class Defensive;
 friend class Insider;
 friend class InsideScoop;
 };

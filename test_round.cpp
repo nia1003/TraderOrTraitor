@@ -1,4 +1,4 @@
-// 編譯命令：g++ test_round.cpp Character.cpp Stage.cpp Stock.cpp Event.cpp Skill.cpp -o test_round
+// 編譯命令：g++ test_round.cpp Character.cpp Stage.cpp Stock.cpp Event.cpp Skill.cpp RandomInt.cpp -o test_round
 
 #include <iostream>
 #include <windows.h>
@@ -64,10 +64,21 @@ int main() {
     Round r(eventPtrs);
     vector<Round> testRound = {r};
 
-    Character* testCha = new Retail("測試用玩家", "我是散戶");
-    testCha->obtainSkill(new AssetGrowth());
+    Character* testPlayer = new Retail("測試用玩家", "我是散戶");
+    Character* testShort = new ShortTerm("測試用短線", "喜歡短線投資");
+    Character* testLong = new LongTerm("測試用長線", "喜歡長線投資");
+    Character* testDef = new Defensive("測試用保守", "喜歡保守投資");
+    Character* testIn = new Insider("Technology", "測試用內部", "內部人員");
+
+    for(int i = 0; i < 10; ++i)
+        testPlayer->obtainSkill(Peek::getId());
     Stage testStage(testStocks, testRound);
-    testStage.characters.push_back(testCha);
+    testStage.characters.push_back(testPlayer);
+    testStage.characters.push_back(testShort);
+    // testStage.characters.push_back(testLong);
+    // testStage.characters.push_back(testDef);
+    // testStage.characters.push_back(testIn);
+
 
     testStage.startStage();
     

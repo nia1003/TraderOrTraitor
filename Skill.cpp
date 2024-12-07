@@ -50,8 +50,12 @@ Result AssetGrowth::activate(Stage& stage, Character& cha) const {
             } catch (exception& e) {
                 if(cha.isPlayer())
                     cerr << e.what() << "\n";
-                else 
-                    num /= 2;
+                else {
+                    if(num == 1)
+                        cha.currentMoney += theAsset.stock->getCurrentPrice();
+                    else 
+                        num /= 2;
+                }
             }
         }
     } else {
@@ -175,7 +179,7 @@ Result Gamble::activate(Stage& stage, Character& cha) const {
 Result Peek::activate(Stage& stage, Character& cha) const {
     // 玩家特有技能
     while(true){
-        cout << "輸入想查看的角色編號: 1 ~ " << stage.characters.size() << "\n";
+        cout << "輸入想查看的角色編號: 2 ~ " << stage.characters.size() << "\n";
         int id;
         cin >> id;
         try{

@@ -118,8 +118,10 @@ public:
 
 class ShortTerm : public Robot {
 private:
+    static vector<string> preferredStocks;
 public:
     ShortTerm(const string& n, const string& des);
+    void takeAction(Stage&, const Round&) override;
 };
 
 class LongTerm : public Robot {

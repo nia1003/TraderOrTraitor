@@ -12,9 +12,12 @@ Result Foresight::activate(Stage& stage, Character& cha) const {
     }
     // 隨機找個股，查看其價格陣列
     string ticker = randomStock(stage.stocks);
+    int nextPrice = Stage::price_per_round.at(ticker)[curRound];
+    int curPrice = Stage::price_per_round.at(ticker)[curRound - 1];
     
-    
-    
+    double changeRate = static_cast<double>(nextPrice) / curPrice;
+    changeRate = round(changeRate * 100) / 100;
+    return Result(ticker + "在下回合將迎來" + to_string(changeRate) + "的價格變動", changeRate, nullptr, ticker);
 }
 
 Result AssetGrowth::activate(Stage& stage, Character& cha) const {
@@ -91,7 +94,10 @@ Result Hedge::activate(Stage& stage, Character& cha) const {
             }
         }
         ticker = maxAsset.stock->getName();
-        money = cha.tradeStocks(stage, ticker, maxAsset.number * 2 / 3, false);
+        if(dynamic_cast<ShortTerm*>(&cha))
+            money = cha.tradeStocks(stage, ticker, maxAsset.number, false);
+        else
+            money = cha.tradeStocks(stage, ticker, maxAsset.number * 2 / 3, false);
     }
     
     // 判斷是否為跌價股

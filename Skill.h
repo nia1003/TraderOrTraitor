@@ -15,10 +15,10 @@ struct Result {
     string strVal; // 給玩家看的
     double doubleVal;
     Event* eventPtr;
-    Stock* stockPtr;
+    string stockTicker;
 
-    Result(const string& str, double d=-100 , Event* e=nullptr, Stock* s=nullptr) : 
-        strVal(str), doubleVal(d), eventPtr(e), stockPtr(s) {}
+    Result(const string& str, double d=-100 , Event* e=nullptr, string s="") : 
+        strVal(str), doubleVal(d), eventPtr(e), stockTicker(s) {}
 };
 
 class Skill{

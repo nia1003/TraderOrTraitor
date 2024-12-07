@@ -24,6 +24,8 @@ struct Round {
 };
 
 struct Stage {
+    static const unordered_map<string, array<int, 11>> price_per_round;
+
     vector<Character*> characters;
     unordered_map<string, Stock*> stocks;
     vector<Round> rounds;

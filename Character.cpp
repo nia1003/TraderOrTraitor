@@ -279,7 +279,64 @@ Robot::Robot(const string& t, const string& n, const string& des) : Character(t,
     this->buyLimit = this->sellLimit = 1000; // 機器人無須限制
 }
 
+vector<string> ShortTerm::preferredStocks = {"MRNA", "UBER", "TSM", "INTC", "UAL", "DAL"};
+
 ShortTerm::ShortTerm(const string& n, const string& des) : Robot("ShortTerm", n, des) {}
+
+void ShortTerm::takeAction(Stage& stage, const Round& round){
+    // 準備檢查持股
+    vector<string> myStocks;
+    myStocks.reserve(this->assets.size());
+    for(const auto& p: this->assets)
+        myStocks.push_back(p.first);
+    int tickerIdx = 0;
+
+    int curRound = stage.getCurRound();
+    if(curRound == 4 || curRound == 6){
+        Result r = this->useSkill(stage, 1);
+        if(r.doubleVal > 0.05){
+            try{
+                this->tradeStocks(stage, r.stockTicker, 4, true);
+            } catch (runtime_error&) {}
+        }
+    }
+
+    while(this->actionCnt > 0) {
+        if(tickerIdx == myStocks.size()) {
+            // 買入波動大股票
+            string target = ShortTerm::preferredStocks[randomInt(0, preferredStocks.size())];
+            int num = randomInt(6, 8);
+            while(true){
+                try {
+                    this->tradeStocks(stage, target, num, 1);
+                } catch (runtime_error& e) {
+                    if(num == 1)
+                        return;
+                    num /= 2;
+                }
+            }
+        } else {
+            // 檢查持股
+            if(tickerIdx == myStocks.size()){
+                Asset& a = this->assets[myStocks[tickerIdx]];
+                if(a.number > 3 && a.stock->getCurrentPrice() > a.stock->getPriceLastRound())
+                    this->tradeStocks(stage, myStocks[tickerIdx], a.number, true);
+                else if (this->currentMoney > a.stock->getCurrentPrice() * 5){
+                    int num = randomInt(3, 5);
+                    try {
+                        this->tradeStocks(stage, myStocks[tickerIdx], num / 2, false);
+                    } catch (runtime_error& e) {
+                        if(num == 1)
+                            return;
+                        num /= 2;
+                    }
+                }
+                ++tickerIdx;
+            }
+        }
+    }
+}
+
 
 vector<string> LongTerm::preferredStocks = {"AAPL", "MSFT", "COST", "KO", "INTC"};
 

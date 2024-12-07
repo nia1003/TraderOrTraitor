@@ -36,6 +36,9 @@ public:
 
     // 影響股價的函數
     void affectStockPrice(unordered_map<string, Stock>& stockMap);
+
+    // getter
+    string getDescription() const {return description;}
 };
 
 #endif

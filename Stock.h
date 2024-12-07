@@ -13,7 +13,7 @@ private:
     string ticker; // 股票的代碼
     string name; // 股票名稱
     string industry; // 產業類別
-    int current_price; // 當前價格 = 原始價格 * (1 + 事件敏感度[0.5, 2.0] * 事件影響力(0, 0.2] * 影響權重(0.0, 1.0])
+    int current_price; // 當前價格 = 原始價格 * (1 + 事件敏感度[0.5, 2.0] * 事件影響力(0, 0.2] * 影響權重[-1.0, 1.0])
     string description; // 股票描述
     double sensitivity;
     /*

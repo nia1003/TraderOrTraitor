@@ -14,7 +14,8 @@ int main() {
     SetConsoleCP(CP_UTF8);       // 設定輸入為 UTF-8
     
     vector<Event> events; // 調用的時候注意每回合3個事件，否則會出錯
-
+    vector<vector<Event>> stage;
+    vector<Event> round_1;
     // 回合一 事件1：新產品發布
     events.emplace_back(
         unordered_map<string, double>{{"AAPL", 0.5}, {"MSFT", 0.3}, {"INTC", 0.2}},

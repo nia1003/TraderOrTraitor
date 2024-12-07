@@ -59,7 +59,7 @@ Result InsideScoop::activate(Stage& stage, Character& cha) const {
     bool eventOccur = false;
     vector<Event*>& events = stage.rounds[curRound].events;
     int eventId =  randomInt(0, events.size() - 1);
-    return Result(events[eventId]->description, -100, events[eventId]);
+    return Result(events[eventId]->getDescription(), -100, events[eventId]);
 }
 
 

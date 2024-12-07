@@ -54,7 +54,7 @@ string Character::showIntroduction() const {
     // 展示名字、介紹、總資產
     stringstream info; 
     info << "名字： " + this->name + "\n    " + this->description + "\n"; // 縮排四格
-    info << "總資產" << this->getTotalAsset() << "\n";
+    info << "總資產： " << this->getTotalAsset() << "\n";
     return info.str();
 }
 
@@ -71,7 +71,6 @@ string Character::showFinancialStatus() const {
         for(const auto& pair: this->assets) 
             info << "    " << pair.second.stock->getName() << " X " << pair.second.number << "持股回合數：" << pair.second.roundCnt << "\n";
     }
-    info << "總資產：" << this->getTotalAsset() << '\n';
     return info.str();
 }
 
@@ -201,7 +200,7 @@ void Player::takeAction(Stage& stage, const Round& round) {
                 if(this->skills.empty())
                     cout << "目前沒有技能\n";
                 for(auto* s: this->skills)
-                    s->showInfo();
+                    cout << s->showInfo() << '\n';
                 break;
             }
                 
@@ -312,17 +311,22 @@ void ShortTerm::takeAction(Stage& stage, const Round& round){
     }
 
     while(this->actionCnt > 0) {
+        cout << "短線進while迴圈了\n";
         if(tickerIdx == myStocks.size()) {
             // 買入波動大的股票
-            string target = ShortTerm::preferredStocks[randomInt(0, preferredStocks.size())];
+            string target = ShortTerm::preferredStocks[randomInt(0, ShortTerm::preferredStocks.size() - 1)];
             int num = randomInt(6, 8);
             while(true){
                 try {
-                    this->tradeStocks(stage, target, num, 1);
+                    this->tradeStocks(stage, target, num, true);
+                    break;
                 } catch (runtime_error& e) {
+                    cerr << e.what() << '\n';
                     if(num == 1)
                         return;
                     num /= 2;
+                } catch (exception& e) {
+                    cerr << "其他錯誤!" << e.what();
                 }
             }
         } else {
@@ -330,20 +334,25 @@ void ShortTerm::takeAction(Stage& stage, const Round& round){
             if(tickerIdx == myStocks.size()){
                 Asset& a = this->assets[myStocks[tickerIdx]];
                 if(a.number > 3 && a.stock->getCurrentPrice() > a.stock->getPriceLastRound())
-                    this->tradeStocks(stage, myStocks[tickerIdx], a.number, true);
+                    this->tradeStocks(stage, myStocks[tickerIdx], a.number, false);
                 else if (this->currentMoney > a.stock->getCurrentPrice() * 5){
                     int num = randomInt(3, 5);
-                    try {
-                        this->tradeStocks(stage, myStocks[tickerIdx], num / 2, false);
-                    } catch (runtime_error& e) {
-                        if(num == 1)
-                            return;
-                        num /= 2;
+                    while(true){
+                        try {
+                            this->tradeStocks(stage, myStocks[tickerIdx], num / 2, true);
+                            break;
+                        } catch (runtime_error& e) {
+                            if(num == 1)
+                                return;
+                            num /= 2;
+                        }
                     }
+                    
                 }
                 ++tickerIdx;
             }
         }
+// cout << this->actionLog.back() << '\n';
     }
 }
 
@@ -363,7 +372,7 @@ void LongTerm::takeAction(Stage& stage, const Round& round) {
     while(this->actionCnt > 0) {
         if(this->currentMoney > this->initMoney / 10){
             int num = 17;
-            string targetStock = LongTerm::preferredStocks[randomInt(0, preferredStocks.size() - 1)];
+            string targetStock = LongTerm::preferredStocks[randomInt(0, LongTerm::preferredStocks.size() - 1)];
             while(true){
                 try {
                     this->tradeStocks(stage, targetStock, num, true);
@@ -395,7 +404,7 @@ void Defensive::takeAction(Stage& stage, const Round& round) {
         for(const auto& p: Insider::industryToTickers){
             // 隨機買入不同產業(除了biotech)股票各11張
             if(p.first[0] == 'B') continue;
-            string ticker = p.second[randomInt(0, p.second.size())];\
+            string ticker = p.second[randomInt(0, p.second.size() - 1)];
             int num = 11;
             while (true){
                 try{

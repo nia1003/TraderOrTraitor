@@ -17,8 +17,8 @@ Result Foresight::activate(Stage& stage, Character& cha) const {
     int curPrice = Stage::price_per_round.at(ticker)[curRound];
     
     double changeRate = static_cast<double>(nextPrice) / curPrice;
-    changeRate = round(changeRate * 100) / 100 - 1;
-    return Result(ticker + "在下回合將迎來" + to_string(changeRate) + "的價格變動", changeRate, nullptr, ticker);
+    int rate = round(changeRate * 100) - 100;
+    return Result(ticker + "在下回合將迎來" + to_string(rate) + "%的價格變動", changeRate, nullptr, ticker);
 }
 
 Result AssetGrowth::activate(Stage& stage, Character& cha) const {

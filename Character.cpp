@@ -438,6 +438,7 @@ void Defensive::takeAction(Stage& stage, const Round& round) {
             while (true){
                 try{
                     this->tradeStocks(stage, ticker, num, true);
+                    break;
                 } catch (runtime_error& e) {
                     if(num == 1) continue;
                     num /= 2;

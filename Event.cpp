@@ -46,3 +46,4 @@ void Event::affectStockPrice(unordered_map<string, Stock>& stockMap) {
         }
     }
 }
+// 有bug，如果這回合有個股沒被影響，或是影響到兩次，那麼歷史價格會亂掉，或許用round包起來會好一點

@@ -6,10 +6,15 @@
 #include <vector>
 #include <unordered_map>
 #include "Stock.h"  // 包含 Stock 定義
+#include "src/Skill.h"
+#include "src/Character.h"
 
 using namespace std;
 
+friend Insider;
+
 class Event{
+    
 private:
     unordered_map<string, double> impactWeight; 
     /* 

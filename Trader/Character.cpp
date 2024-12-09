@@ -183,7 +183,8 @@ void Player::takeAction(Stage& stage, const Round& round) {
 
             case 2: {
                 for(auto it = stage.characters.begin() + 1; it != stage.characters.end(); ++it){
-                    cout << (*it)->showIntroduction();
+                    cout << (*it)->showIntroduction() 
+                         << "---------------------\n";
                 }
                 break;
             }
@@ -198,7 +199,8 @@ void Player::takeAction(Stage& stage, const Round& round) {
                 if(this->skills.empty())
                     cout << "目前沒有技能\n";
                 for(auto* s: this->skills)
-                    cout << s->getName() << ": " << s->showInfo() << '\n';
+                    cout << s->getName() << ": " << s->showInfo()
+                         << "---------------------\n";
                 break;
             }
                 

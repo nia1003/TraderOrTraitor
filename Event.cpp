@@ -43,11 +43,6 @@ void Event::affectStockPrice(unordered_map<string, Stock*>& stockMap) {
             p.second->setCurrentPrice(newPrice);
 
             // Debug 輸出
-            cout << "Updated " << p.first << ": old price = " << oldPrice
-                 << ", new price = " << newPrice
-                 << ", sensitivity = " << sensitivity
-                 << ", weight = " << weight
-                 << ", event impact = " << eventImpact << endl;
         }
     }
 }

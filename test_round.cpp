@@ -284,8 +284,11 @@ int main() {
     Character* testDef = new Defensive("測試用保守", "喜歡保守投資");
     Character* testIn = new Insider("Technology", "測試用內部", "內部人員");
 
-    for(int i = 0; i < 6; ++i)
+    for(int i = 0; i < 5; ++i)
         testPlayer->obtainSkill(i);
+    for(int i = 0; i < 5; ++i)
+        testPlayer->obtainSkill(Peek::getId());
+
     Stage testStage(stockMap, rounds);
     testStage.characters.push_back(testPlayer);
     testStage.characters.push_back(testShort);

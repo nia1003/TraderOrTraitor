@@ -13,8 +13,8 @@ const unordered_map<string, int> Character::maxActionCntMap = {
 };
 
 const unordered_map<string, array<int, 2>> Character::initMoneyRangeMap = {
-    {"Retail", {4000, 5000}}, {"Rich", {7500, 9000}}, // Player
-    {"ShortTerm", {4000, 5000}}, {"LongTerm", {6000, 7000}}, {"Defensive", {5500, 6500}}, {"Insider", {6000, 7000}} // Robot
+    {"Retail", {4500, 5000}}, {"Rich", {6000, 6500}}, // Player
+    {"ShortTerm", {5000, 5500}}, {"LongTerm", {6000, 6500}}, {"Defensive", {5000, 5500}}, {"Insider", {6000, 6500}} // Robot
 };
 
 vector<Skill*> Character::skillList = {new Foresight(), new AssetGrowth(), new Hedge(), new InsideScoop(), new Gamble(), new Peek()};
@@ -202,7 +202,7 @@ void Player::takeAction(Stage& stage, const Round& round) {
                 if(this->skills.empty())
                     cout << "目前沒有技能\n";
                 for(auto* s: this->skills)
-                    cout << s->showInfo() << '\n';
+                    cout << s->getName() << ": " << s->showInfo() << '\n';
                 break;
             }
                 
@@ -285,7 +285,7 @@ vector<string> ShortTerm::preferredStocks = {"MRNA", "UBER", "TSM", "INTC", "UAL
 ShortTerm::ShortTerm(const string& n, const string& des) : Robot("ShortTerm", n, des) {
     for(int _ = 0; _ < 2; ++_)
         this->obtainSkill(Foresight::getId());
-    this->obtainSkill(Hedge::getId());
+    this->obtainSkill(AssetGrowth::getId());
     this->obtainSkill(Gamble::getId());
 }
 
@@ -300,11 +300,17 @@ void ShortTerm::takeAction(Stage& stage, const Round& round){
     int curRound = stage.getCurRound();
     if (curRound == 4 || curRound == 6) {
         Result r = this->useSkill(stage, 1);
-        if(r.intVal > 5){
+        
+        if(r.intVal >= 5){
             try{
                 this->tradeStocks(stage, r.stockTicker, 4, true);
-            } catch (runtime_error&) {}
+            } catch (runtime_error& e) {}
+        } else if (r.intVal <= -5) {
+            try{
+                this->tradeStocks(stage, r.stockTicker, 4, false);
+            } catch (runtime_error& e) {}
         }
+
     } else if (curRound == 7) {
         this->useSkill(stage, 1);
     } else if (curRound == 10){
@@ -322,7 +328,6 @@ void ShortTerm::takeAction(Stage& stage, const Round& round){
                     this->tradeStocks(stage, target, num, true);
                     break;
                 } catch (runtime_error& e) {
-                    cerr << e.what() << '\n';
                     if(num == 1)
                         return;
                     num /= 2;
@@ -330,26 +335,24 @@ void ShortTerm::takeAction(Stage& stage, const Round& round){
             }
         } else {
             // 檢查持股
-            if(tickerIdx == myStocks.size()){
-                Asset& a = this->assets[myStocks[tickerIdx]];
-                if(a.number > 3 && a.stock->getCurrentPrice() > a.stock->getPriceLastRound())
-                    this->tradeStocks(stage, myStocks[tickerIdx], a.number, false);
-                else if (this->currentMoney > a.stock->getCurrentPrice() * 5){
-                    int num = randomInt(3, 5);
-                    while(true){
-                        try {
-                            this->tradeStocks(stage, myStocks[tickerIdx], num / 2, true);
-                            break;
-                        } catch (runtime_error& e) {
-                            if(num == 1)
-                                return;
-                            num /= 2;
-                        }
+            Asset& a = this->assets[myStocks[tickerIdx]];
+            if(a.number > 3 && a.stock->getCurrentPrice() > a.stock->getPriceLastRound())
+                this->tradeStocks(stage, myStocks[tickerIdx], a.number, false);
+            else if (this->currentMoney > a.stock->getCurrentPrice() * 5){
+                int num = randomInt(3, 5);
+                while(true){
+                    try {
+                        this->tradeStocks(stage, myStocks[tickerIdx], num / 2, true);
+                        break;
+                    } catch (runtime_error& e) {
+                        if(num == 1)
+                            return;
+                        num /= 2;
                     }
-                    
                 }
-                ++tickerIdx;
+                
             }
+            ++tickerIdx;
         }
     }
     cout << this->name << "行動完畢\n";
@@ -386,8 +389,7 @@ void LongTerm::takeAction(Stage& stage, const Round& round) {
             }
         } else {
             string target = randomStock<Asset>(this->assets);
-            int num = this->assets[target].number / 4;
-            this->tradeStocks(stage, target, num, false);
+            this->tradeStocks(stage, target, this->assets[target].number / 4 + 1, false);
         }
     }
     cout << this->name << "行動完畢\n";
@@ -446,7 +448,7 @@ void Defensive::takeAction(Stage& stage, const Round& round) {
             }
         } else {
             string ticker = randomStock<Asset>(this->assets);
-            this->tradeStocks(stage, ticker, this->assets[ticker].number / 3, false);
+            this->tradeStocks(stage, ticker, this->assets[ticker].number / 3 + 1, false);
         }
     }
     cout << this->name << "行動完畢\n";
@@ -525,7 +527,7 @@ void Insider::takeAction(Stage& stage, const Round& round) {
             }
         } else {
             string target = randomStock<Asset>(this->assets);
-            int num = this->assets[target].number / 3;
+            int num = this->assets[target].number / 3 + 1;
             this->tradeStocks(stage, target, num, false);
         }
     }

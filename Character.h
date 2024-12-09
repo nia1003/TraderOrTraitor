@@ -65,6 +65,7 @@ public:
     void obtainSkill(int);
     int getTotalAsset() const; // currentMoney + Σ(s.num * s.price) for s in stocks
     void resetActionCnt() { this->actionCnt = Character::maxActionCntMap.at(this->type); }
+    void clearActionLog() { this->actionLog.clear(); }
     virtual void takeAction(Stage&, const Round&) = 0; // 實現各自的操作策略
 
     // 遊戲操作相關(玩家有對應操作)

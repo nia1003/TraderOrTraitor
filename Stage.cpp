@@ -1,4 +1,5 @@
 #include "Stage.h"
+#include <algorithm>
 
 const unordered_map<string, array<int, 11>> Stage::price_per_round = 
 {
@@ -27,7 +28,6 @@ void Stage::startStage() {
         for(auto& stock: stocks)
         {
             stock.second->addToPriceHistory(stock.second->getCurrentPrice());
-            cout << "Update Success! Last Price is " << stock.second->getCurrentPrice() << endl;
         }
 
         // 事件影響股價
@@ -35,16 +35,29 @@ void Stage::startStage() {
         r.events[1]->affectStockPrice(stocks);
         r.events[2]->affectStockPrice(stocks);
 
-        // 增加玩家持股的回合數
+        // 增加玩家持股的回合數，清除本回合操作紀錄
         for(Character* cha: this->characters){
-            for(auto& a: cha->assets){
+            for(auto& a: cha->assets)
                 ++a.second.roundCnt;
-            }
+            cha->clearActionLog();
+        }
+
+        // 依總資產排序角色，得到結果
+        vector<Character*> sortedCharas(this->characters.begin(), this->characters.end());
+        sort(sortedCharas.begin(), sortedCharas.end(), [](Character* a, Character* b){
+            return a->getTotalAsset() > b->getTotalAsset();
+        });
+        for(int i = 0; i < sortedCharas.size(); ++i){
+            cout << i + 1 << ": " << sortedCharas[i]->getName() << "\n";
         }
 
         // 更新回合數
         ++currentRound;
     }
+// 印股價測試
+for(auto& p: this->stocks){
+    p.second->printHistory();
+}
 }
 
 void Round::startRound(Stage& stage) {

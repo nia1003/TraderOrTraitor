@@ -61,11 +61,11 @@ void Stock::addToPriceHistory(int current_price) // 回合結束的時候更新
 int Stock::getPriceLastRound() const
 {
     // 如果歷史價格不足兩個，返回當前價格或預設值
-    if(priceHistory.size() < 2)
+    if(priceHistory.empty())
     {
         return current_price;
     }
 
     // 返回倒數第二個價格
-    return priceHistory[priceHistory.size() - 2];
+    return priceHistory[priceHistory.back()];
 }

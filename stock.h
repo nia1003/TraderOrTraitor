@@ -21,7 +21,7 @@ private:
         <1.0：穩定的大型公司（如 TSM, KO）。
         1.0 ~ 2.0：成長型或波動性較大的公司（如 UBER, MRNA）。
     */
-    vector<double> priceHistory; // 股票的歷史價格數據，回合結束時更新
+    vector<int> priceHistory; // 股票的歷史價格數據，回合結束時更新
 
 public:
     Stock(string ticker, const string& name, const string& ind, int price, const string& des, double sen) : 
@@ -49,6 +49,13 @@ public:
    // print股票資訊
    void printStockInfo() const;
    void printStockPartialInfo() const;
+void printHistory(){
+    cout << this->ticker << ": ";
+    for(int& price: this->priceHistory){
+        cout << price << " ";
+    }
+    cout << "\n";
+}
 
    // setter
    void setCurrentPrice(int currentprice) {this->current_price = currentprice;}

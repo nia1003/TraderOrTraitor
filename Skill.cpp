@@ -23,12 +23,14 @@ Result Foresight::activate(Stage& stage, Character& cha) const {
 
 Result AssetGrowth::activate(Stage& stage, Character& cha) const {
     int maxRoundCnt = 0;
-    Asset theAsset;
+    Asset theAsset(0, stage.stocks["AAPL"]);
 
-    // 找最久的持股
+    // 找最久的持股，如果一樣，就找出總價值高的
     for (const auto& a: cha.assets) {
         if(a.second.roundCnt > maxRoundCnt){
             maxRoundCnt = a.second.roundCnt;
+            theAsset = a.second;
+        } else if (a.second.roundCnt == maxRoundCnt && a.second.getValue() > theAsset.getValue()){
             theAsset = a.second;
         }
     }
@@ -38,14 +40,14 @@ Result AssetGrowth::activate(Stage& stage, Character& cha) const {
         cha.currentMoney += increment;
         return Result("最久的持股為" + theAsset.stock->getName() + "，獲得" + to_string(increment) + "的資金");
     } else if(maxRoundCnt >= 3) {
+        int num = theAsset.number;
         while(true){
-            int num = theAsset.number;
             if(cha.isPlayer()){
                 cout << "最久的持股： " << theAsset.stock->getName() << "\n輸入欲購買數量：";
                 cin >> num;
             }
             try {
-                int reward = cha.tradeStocks(stage, theAsset.stock->getName(), num, true) * 0.08;
+                int reward = cha.tradeStocks(stage, theAsset.stock->getTicker(), num, true) * 0.08;
                 cha.currentMoney += reward;
                 break;
             } catch (exception& e) {
@@ -105,7 +107,7 @@ Result Hedge::activate(Stage& stage, Character& cha) const {
         if(dynamic_cast<ShortTerm*>(&cha))
             money = cha.tradeStocks(stage, ticker, maxAsset.number, false);
         else
-            money = cha.tradeStocks(stage, ticker, maxAsset.number * 2 / 3, false);
+            money = cha.tradeStocks(stage, ticker, maxAsset.number * 2 / 3 + 1, false);
     }
     
     // 判斷是否為跌價股

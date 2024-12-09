@@ -183,7 +183,7 @@ void Player::takeAction(Stage& stage, const Round& round) {
 
             case 2: {
                 for(auto it = stage.characters.begin() + 1; it != stage.characters.end(); ++it){
-                    (*it)->showIntroduction();
+                    cout << (*it)->showIntroduction();
                 }
                 break;
             }

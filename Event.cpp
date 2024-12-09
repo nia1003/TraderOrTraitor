@@ -27,19 +27,27 @@ void Event::printEventPartialDetails() const {
 }
 // 影響股價的函數
 void Event::affectStockPrice(unordered_map<string, Stock*>& stockMap) {
-    for (auto& p : stockMap) { // 可能會有衝突
-        // 確定這支股票是否受影響
+    for (auto& p : stockMap) {
+        // 確認該股票是否受影響
         if (impactWeight.count(p.first)) {
             double weight = impactWeight[p.first];
-            int newPrice = p.second.getCurrentPrice() *
-                                (1 + p.second.getSensitivity() * eventImpact * weight);
-            int oldPrice = p.second.getCurrentPrice();
+
+            // 使用指標訪問 p.second 成員
+            double sensitivity = p.second->getSensitivity();
+            int oldPrice = p.second->getCurrentPrice();
+
+            // 根據公式計算新價格
+            int newPrice = oldPrice * (1 + sensitivity * eventImpact * weight);
 
             // 更新股價
-            cout << p.first << "," << p.second.getSensitivity() << "," << eventImpact << "," << weight << endl;
-            p.second.setCurrentPrice(newPrice);
-            // cout << "Updated " << p.first << " from " << oldPrice
-            //         << " to new price: " << newPrice << endl;
+            p.second->setCurrentPrice(newPrice);
+
+            // Debug 輸出
+            cout << "Updated " << p.first << ": old price = " << oldPrice
+                 << ", new price = " << newPrice
+                 << ", sensitivity = " << sensitivity
+                 << ", weight = " << weight
+                 << ", event impact = " << eventImpact << endl;
         }
     }
 }

@@ -101,7 +101,7 @@ Result Hedge::activate(Stage& stage, Character& cha) const {
                 maxAsset = a.second;
             }
         }
-        ticker = maxAsset.stock->getName();
+        ticker = maxAsset.stock->getTicker();
         if(dynamic_cast<ShortTerm*>(&cha))
             money = cha.tradeStocks(stage, ticker, maxAsset.number, false);
         else

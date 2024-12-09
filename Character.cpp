@@ -70,7 +70,8 @@ string Character::showFinancialStatus() const {
     else {
         info << '\n';
         for(const auto& pair: this->assets) 
-            info << "    " << pair.second.stock->getTicker() << " X " << pair.second.number << "  持股回合數：" << pair.second.roundCnt << "\n";
+            info << "    " << pair.second.stock->getTicker() << " X " << pair.second.number 
+                 << "  持股回合數：" << pair.second.roundCnt << "  股價：" << pair.second.stock->getCurrentPrice() << "\n";
     }
     return info.str();
 }
@@ -181,13 +182,8 @@ void Player::takeAction(Stage& stage, const Round& round) {
                 break;
 
             case 2: {
-                cout << "輸入想查看的角色編號: 2 ~ " << stage.characters.size() << "\n";
-                int id;
-                cin >> id;
-                try{
-                    cout << stage.characters.at(id - 1)->showIntroduction();
-                } catch (out_of_range& e) {
-                    cerr << "不存在的角色編號：" + to_string(id) + "\n";
+                for(auto it = stage.characters.begin() + 1; it != stage.characters.end(); ++it){
+                    (*it)->showIntroduction();
                 }
                 break;
             }

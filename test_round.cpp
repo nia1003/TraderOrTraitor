@@ -278,7 +278,7 @@ int main() {
     }
 
 
-    Character* testPlayer = new Retail("測試用玩家", "我是散戶");
+    Character* testPlayer = new Rich("測試用玩家", "我是富爸爸");
     Character* testShort = new ShortTerm("測試用短線", "喜歡短線投資");
     Character* testLong = new LongTerm("測試用長線", "喜歡長線投資");
     Character* testDef = new Defensive("測試用保守", "喜歡保守投資");

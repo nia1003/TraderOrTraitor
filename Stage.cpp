@@ -16,6 +16,10 @@ const unordered_map<string, array<int, 11>> Stage::price_per_round =
 
 void Stage::startStage() {
     for(Round r: rounds) {
+        // 重置角色操作次數
+        for(Character* cha: this->characters)
+            cha->resetActionCnt();
+
         // 事件發生->機器人先進行操作->玩家進行操作->回合結束->歷史價格更新->事件影響股價
         r.startRound(*this);
 
@@ -30,6 +34,13 @@ void Stage::startStage() {
         r.events[0]->affectStockPrice(stocks);
         r.events[1]->affectStockPrice(stocks);
         r.events[2]->affectStockPrice(stocks);
+
+        // 增加玩家持股的回合數
+        for(Character* cha: this->characters){
+            for(auto& a: cha->assets){
+                ++a.second.roundCnt;
+            }
+        }
 
         // 更新回合數
         ++currentRound;

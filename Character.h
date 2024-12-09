@@ -80,6 +80,7 @@ friend class AssetGrowth;
 friend class Hedge;
 friend class InsideScoop;
 friend class Gamble;
+friend struct Stage;
 };
 
 

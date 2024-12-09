@@ -1,21 +1,61 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 #include <SFML/Window.hpp>
-#include <SFML/Audio.hpp>
-#include <SFML/Network.hpp>
 #include <iostream>
 #include <filesystem>
-#include "Game.h"
-#include "UI.h"
+
 
 namespace fs = std::filesystem;
 fs::path currentPath = fs::current_path();
+
+
+
+class Button {
+public:
+    Button(float x, float y, std::string button_text, float size = 1) {
+        // Create a rectangle shape for the button
+        sf::RectangleShape button(sf::Vector2f(size * 200.f, size * 150.f));
+        
+        // Set the button color to black with 40 alpha (transparent black)
+        button.setFillColor(sf::Color(0, 0, 0, 40)); // Black color with alpha = 40 (transparent)
+
+        // Set the button position
+        button.setPosition(x, y);
+
+        // Load the font for the text
+        sf::Font buttonFont;
+        if (!buttonFont.loadFromFile("assets/fonts/en_Dhurjati-Regular.ttf")) {
+            // Handle error if the font loading fails
+            std::cerr << "Error loading font!" << std::endl;
+        }
+
+        // Create a text object with the provided button text
+        sf::Text text(button_text, font);
+        text.setCharacterSize(30);
+        text.setStyle(sf::Text::Bold);
+        text.setFillColor(sf::Color::Red);
+
+        // Set the text position to be centered within the button
+        // Calculate the position based on button size and text size
+        float textWidth = text.getLocalBounds().width;
+        float textHeight = text.getLocalBounds().height;
+        text.setPosition(x + (200.f * size - textWidth) / 2, y + (150.f * size - textHeight) / 2);
+
+        // Assuming you have a window to draw the button
+        window.draw(button);
+        window.draw(text);
+    }
+
+private:
+    // Assuming window is declared elsewhere, such as in the main function
+    sf::RenderWindow& window;
+};
 
 int main()
 {
     std::cout << "開始創建遊戲..." << std::endl;
     // 創建 SFML 視窗
-    sf::RenderWindow window(sf::VideoMode(1200, 900), "SFML works! Game: Trader or Trailor");
+    sf::RenderWindow window(sf::VideoMode(1200, 900), "SFML works!");
     sf::RectangleShape startButton(sf::Vector2f(200.f, 100.f));
     startButton.setFillColor(sf::Color::Green);
     startButton.setPosition(300.f, 100.f); // 將矩形框放在窗口中央
@@ -34,7 +74,7 @@ int main()
         return -1;
     }
     else{
-        cout << "字體加載成功" << endl;
+        std::cout << "字體加載成功" << std::endl;
     }
 
     // 創建文字
@@ -46,12 +86,7 @@ int main()
     buttonText.setStyle(sf::Text::Bold);
 
     // 創建遊戲和 UI 物件
-    //創建三個關卡
-    gameLevel Level1;
-    gameLevel Level2;
-    gameLevel Level3;
-    UI ui;
-
+  
     // 主遊戲循環
     while (window.isOpen())
     {

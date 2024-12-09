@@ -1,4 +1,5 @@
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <vector>
 #include <unordered_map>
@@ -21,9 +22,12 @@ void Event::printEventDetails() const {
         cout << "影響範圍: 無" << endl;
     }
 }
-void Event::printEventPartialDetails() const {
-    cout << "事件描述: " << description << endl;
-    cout << "消息來源: " << source << endl;
+string Event::printEventPartialDetails() const {
+    stringstream ss;
+    ss << "事件描述: " << description << endl
+       << "消息來源: " << source << endl
+       << "-------------------------\n";
+    return ss.str();
 }
 // 影響股價的函數
 void Event::affectStockPrice(unordered_map<string, Stock*>& stockMap) {

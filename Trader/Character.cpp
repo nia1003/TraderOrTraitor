@@ -178,7 +178,7 @@ void Player::takeAction(Stage& stage, const Round& round) {
         switch (command) {
             case 1:
                 for(Event* e: round.events)
-                    e->printEventPartialDetails();
+                    cout << e->printEventPartialDetails();
                 break;
 
             case 2: {
@@ -190,7 +190,7 @@ void Player::takeAction(Stage& stage, const Round& round) {
 
             case 3: {
                 for(const pair<string, Stock*>& p: stage.stocks)
-                    p.second->printStockPartialInfo();
+                    cout << p.second->printStockPartialInfo();
                 break;
             }
                 

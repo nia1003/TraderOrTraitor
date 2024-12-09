@@ -48,7 +48,9 @@ public:
 
    // print股票資訊
    void printStockInfo() const;
-   void printStockPartialInfo() const;
+   string printStockPartialInfo() const;
+
+// 測試用
 void printHistory(){
     cout << this->ticker << ": ";
     for(int& price: this->priceHistory){

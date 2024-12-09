@@ -37,7 +37,7 @@ Result AssetGrowth::activate(Stage& stage, Character& cha) const {
         int increment = theAsset.getValue() * 0.1;
         cha.currentMoney += increment;
         return Result("最久的持股為" + theAsset.stock->getName() + "，獲得" + to_string(increment) + "的資金");
-    } else if(maxRoundCnt >= 4) {
+    } else if(maxRoundCnt >= 3) {
         while(true){
             int num = theAsset.number;
             if(cha.isPlayer()){

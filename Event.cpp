@@ -26,7 +26,7 @@ void Event::printEventPartialDetails() const {
     cout << "消息來源: " << source << endl;
 }
 // 影響股價的函數
-void Event::affectStockPrice(unordered_map<string, Stock>& stockMap) {
+void Event::affectStockPrice(unordered_map<string, Stock*>& stockMap) {
     for (auto& p : stockMap) { // 可能會有衝突
         // 確定這支股票是否受影響
         if (impactWeight.count(p.first)) {
@@ -38,8 +38,8 @@ void Event::affectStockPrice(unordered_map<string, Stock>& stockMap) {
             // 更新股價
             cout << p.first << "," << p.second.getSensitivity() << "," << eventImpact << "," << weight << endl;
             p.second.setCurrentPrice(newPrice);
-            cout << "Updated " << p.first << " from " << oldPrice
-                    << " to new price: " << newPrice << endl;
+            // cout << "Updated " << p.first << " from " << oldPrice
+            //         << " to new price: " << newPrice << endl;
         }
     }
 }

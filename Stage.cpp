@@ -16,7 +16,22 @@ const unordered_map<string, array<int, 11>> Stage::price_per_round =
 
 void Stage::startStage() {
     for(Round r: rounds) {
+        // 事件發生->機器人先進行操作->玩家進行操作->回合結束->歷史價格更新->事件影響股價
         r.startRound(*this);
+
+        // 更新歷史價格
+        for(auto& stock: stocks)
+        {
+            stock.second->addToPriceHistory(stock.second->getCurrentPrice());
+            cout << "Update Success! Last Price is " << stock.second->getCurrentPrice() << endl;
+        }
+
+        // 事件影響股價
+        r.events[0]->affectStockPrice(stocks);
+        r.events[1]->affectStockPrice(stocks);
+        r.events[2]->affectStockPrice(stocks);
+
+        // 更新回合數
         ++currentRound;
     }
 }

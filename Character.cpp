@@ -300,7 +300,7 @@ void ShortTerm::takeAction(Stage& stage, const Round& round){
     int curRound = stage.getCurRound();
     if (curRound == 4 || curRound == 6) {
         Result r = this->useSkill(stage, 1);
-        if(r.doubleVal > 0.05){
+        if(r.intVal > 5){
             try{
                 this->tradeStocks(stage, r.stockTicker, 4, true);
             } catch (runtime_error&) {}

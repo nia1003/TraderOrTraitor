@@ -266,6 +266,7 @@ void Player::takeAction(Stage& stage, const Round& round) {
                 } else {
                     cerr << "不存在的指令代號：" + to_string(command) + '\n';
                 }
+                break;
             }
                 
             default:

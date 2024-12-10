@@ -13,8 +13,8 @@ const unordered_map<string, int> Character::maxActionCntMap = {
 };
 
 const unordered_map<string, array<int, 2>> Character::initMoneyRangeMap = {
-    {"Retail", {4500, 5000}}, {"Rich", {6000, 6500}}, // Player
-    {"ShortTerm", {5000, 5500}}, {"LongTerm", {6000, 6500}}, {"Defensive", {5000, 5500}}, {"Insider", {6000, 6500}} // Robot
+    {"Retail", {5000, 5500}}, {"Rich", {6000, 6500}}, // Player
+    {"ShortTerm", {5500, 6000}}, {"LongTerm", {6000, 6500}}, {"Defensive", {5000, 5500}}, {"Insider", {6000, 6500}} // Robot
 };
 
 vector<Skill*> Character::skillList = {new Foresight(), new AssetGrowth(), new Hedge(), new InsideScoop(), new Gamble(), new Peek()};
@@ -154,6 +154,7 @@ Result Character::useSkill(Stage& stage, int skillId) {
 }
 
 const array<short, 2> Player::tradeLimits = {40, 30}; // 機器人無須限制
+bool Player::getPresentFromLCK = false;
 
 Player::Player(const string& t, const string& n, const string& des) : Character(t, n, des) {
     this->buyLimit = Player::tradeLimits[0];
@@ -196,9 +197,7 @@ void Player::takeAction(Stage& stage, const Round& round) {
             }
                 
             case 4: {
-                if(this->skills.empty())
-                    cout << "目前沒有技能\n";
-                for(auto* s: this->skills)
+                for(Skill* s: Character::skillList)
                     cout << s->getName() << ": " << s->showInfo()
                          << "---------------------\n";
                 break;
@@ -256,9 +255,21 @@ void Player::takeAction(Stage& stage, const Round& round) {
                     this->actionCnt = 0;
                 continue; // 回到while迴圈後，立刻觸發終止條件
             }
+
+            case 123: {
+                if(!Player::getPresentFromLCK){
+                    Player::getPresentFromLCK = true;
+                    stage.characters.back()->currentMoney -= 100;
+                    this->currentMoney += 100;
+                    --this->actionCnt;
+                    cout << "***小傑請你吃了麥當勞***\n";
+                } else {
+                    cerr << "不存在的指令代號：" + to_string(command) + '\n';
+                }
+            }
                 
             default:
-                cerr << "不存在的指令代號：" + to_string(command);
+                cerr << "不存在的指令代號：" + to_string(command) + '\n';
                 break;
         }
         cout << "按enter繼續\n";
@@ -281,9 +292,8 @@ Robot::Robot(const string& t, const string& n, const string& des) : Character(t,
 vector<string> ShortTerm::preferredStocks = {"MRNA", "UBER", "TSM", "INTC", "UAL", "DAL"};
 
 ShortTerm::ShortTerm(const string& n, const string& des) : Robot("ShortTerm", n, des) {
-    for(int _ = 0; _ < 2; ++_)
+    for(int _ = 0; _ < 3; ++_)
         this->obtainSkill(Foresight::getId());
-    this->obtainSkill(AssetGrowth::getId());
     this->obtainSkill(Gamble::getId());
 }
 
@@ -296,7 +306,7 @@ void ShortTerm::takeAction(Stage& stage, const Round& round){
     int tickerIdx = 0;
 
     int curRound = stage.getCurRound();
-    if (curRound == 4 || curRound == 6) {
+    if (curRound == 4 || curRound == 6 || curRound == 7) {
         Result r = this->useSkill(stage, 1);
         
         if(r.intVal >= 5){
@@ -309,8 +319,6 @@ void ShortTerm::takeAction(Stage& stage, const Round& round){
             } catch (runtime_error& e) {}
         }
 
-    } else if (curRound == 7) {
-        this->useSkill(stage, 1);
     } else if (curRound == 10){
         if(this->getTotalAsset() <= stage.characters[0]->getTotalAsset() - 200)
             this->useSkill(stage, 1);
@@ -353,7 +361,7 @@ void ShortTerm::takeAction(Stage& stage, const Round& round){
             ++tickerIdx;
         }
     }
-    cout << this->name << "行動完畢\n";
+    // cout << this->name << "行動完畢\n";
 }
 
 
@@ -390,7 +398,7 @@ void LongTerm::takeAction(Stage& stage, const Round& round) {
             this->tradeStocks(stage, target, this->assets[target].number / 4 + 1, false);
         }
     }
-    cout << this->name << "行動完畢\n";
+    // cout << this->name << "行動完畢\n";
 }
 
 Defensive::Defensive(const string& n, const string& des) : Robot("Defensive", n, des) {
@@ -449,7 +457,7 @@ void Defensive::takeAction(Stage& stage, const Round& round) {
             this->tradeStocks(stage, ticker, this->assets[ticker].number / 3 + 1, false);
         }
     }
-    cout << this->name << "行動完畢\n";
+    // cout << this->name << "行動完畢\n";
 }
 
 
@@ -529,5 +537,5 @@ void Insider::takeAction(Stage& stage, const Round& round) {
             this->tradeStocks(stage, target, num, false);
         }
     }
-    cout << this->name << "行動完畢\n";
+    // cout << this->name << "行動完畢\n";
 }

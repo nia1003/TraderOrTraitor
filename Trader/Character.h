@@ -82,6 +82,7 @@ friend class Hedge;
 friend class InsideScoop;
 friend class Gamble;
 friend struct Stage;
+friend class Player;
 };
 
 
@@ -89,6 +90,7 @@ friend struct Stage;
 class Player : public Character {
 protected:
     static const array<short, 2> tradeLimits; // 買入、賣出限制。
+    static bool getPresentFromLCK;
 public:
     Player(const string& t, const string& n, const string& des);
     virtual ~Player() = default;

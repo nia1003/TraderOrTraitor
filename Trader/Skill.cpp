@@ -174,12 +174,12 @@ Result Gamble::activate(Stage& stage, Character& cha) const {
     int moneyChange;
     if(result <= 6){
         // 成功
-        moneyChange = money * 0.2;
+        moneyChange = money * 0.25;
         cha.currentMoney += moneyChange;
         return Result("豪賭成功！獲得" + to_string(moneyChange) + "的額外收益");
     } else {
         // 失敗
-        moneyChange = money * 0.1;
+        moneyChange = money * 0.12;
         cha.currentMoney -= moneyChange;
         return Result("豪賭失敗，承擔" + to_string(moneyChange) + "的虧損");
     }

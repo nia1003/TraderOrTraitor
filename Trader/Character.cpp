@@ -14,7 +14,7 @@ const unordered_map<string, int> Character::maxActionCntMap = {
 
 const unordered_map<string, array<int, 2>> Character::initMoneyRangeMap = {
     {"Retail", {5000, 5500}}, {"Rich", {6000, 6500}}, // Player
-    {"ShortTerm", {5500, 6000}}, {"LongTerm", {6000, 6500}}, {"Defensive", {5000, 5500}}, {"Insider", {6000, 6500}} // Robot
+    {"ShortTerm", {5500, 6000}}, {"LongTerm", {6000, 6500}}, {"Defensive", {4000, 4500}}, {"Insider", {6000, 6500}} // Robot
 };
 
 vector<Skill*> Character::skillList = {new Foresight(), new AssetGrowth(), new Hedge(), new InsideScoop(), new Gamble(), new Peek()};
@@ -183,8 +183,9 @@ void Player::takeAction(Stage& stage, const Round& round) {
                 break;
 
             case 2: {
+                int i = 2;
                 for(auto it = stage.characters.begin() + 1; it != stage.characters.end(); ++it){
-                    cout << (*it)->showIntroduction() 
+                    cout << i << ": " << (*it)->showIntroduction() 
                          << "---------------------\n";
                 }
                 break;
@@ -199,7 +200,7 @@ void Player::takeAction(Stage& stage, const Round& round) {
             case 4: {
                 for(Skill* s: Character::skillList)
                     cout << s->getName() << ": " << s->showInfo()
-                         << "---------------------\n";
+                         << "\n---------------------\n";
                 break;
             }
                 
@@ -274,9 +275,8 @@ void Player::takeAction(Stage& stage, const Round& round) {
                 break;
         }
         cout << "按enter繼續\n";
-        cin.ignore(); // ignore'\n'
-        string sth;
-        getline(cin, sth);
+        cin.get();
+        cin.get();
     }
 }
 

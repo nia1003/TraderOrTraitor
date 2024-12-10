@@ -309,9 +309,8 @@ int main() {
         }
     }
     cout << "按enter開始遊戲\n";
-    string enter;
-    cin.ignore();
-    getline(cin, enter);
+    cin.get();
+    cin.get();
     
     for(int i = 0; i < 5; ++i)
         playerCha->obtainSkill(i);

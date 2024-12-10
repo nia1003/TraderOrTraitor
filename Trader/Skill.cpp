@@ -38,12 +38,12 @@ Result AssetGrowth::activate(Stage& stage, Character& cha) const {
     if(maxRoundCnt >= 7) {
         int increment = theAsset.getValue() * 0.1;
         cha.currentMoney += increment;
-        return Result("最久的持股為" + theAsset.stock->getName() + "，獲得" + to_string(increment) + "的資金");
+        return Result("最久的持股為" + theAsset.stock->getTicker() + "，獲得" + to_string(increment) + "的資金");
     } else if(maxRoundCnt >= 3) {
         int num = theAsset.number;
         while(true){
             if(cha.isPlayer()){
-                cout << "最久的持股： " << theAsset.stock->getName() << "\n輸入欲購買數量：";
+                cout << "最久的持股： " << theAsset.stock->getTicker() << "\n輸入欲購買數量：";
                 cin >> num;
             }
             try {
@@ -94,28 +94,26 @@ Result Hedge::activate(Stage& stage, Character& cha) const {
             }
         }
     } else {
-        // 找到跌價股中最有價值資產，賣2/3
+        // 找到持股中最有價值資產，賣2/3
         int value = 0;
         Asset maxAsset;
         for (const auto& a: cha.assets) {
             if(a.second.getValue() > value){
-                value = a.second.roundCnt;
+                value = a.second.getValue();
                 maxAsset = a.second;
             }
         }
         ticker = maxAsset.stock->getTicker();
-        if(dynamic_cast<ShortTerm*>(&cha))
-            money = cha.tradeStocks(stage, ticker, maxAsset.number, false);
-        else
-            money = cha.tradeStocks(stage, ticker, maxAsset.number * 2 / 3 + 1, false);
+        money = cha.tradeStocks(stage, ticker, maxAsset.number * 2 / 3 + 1, false);
     }
-    
+
     // 判斷是否為跌價股
-    const Stock& theStock = *stage.stocks.at(ticker);
-    if(theStock.getCurrentPrice() < theStock.getPriceLastRound()){
+    Stock* theStock = stage.stocks.at(ticker);
+    if(theStock->getCurrentPrice() < theStock->getPriceLastRound()){
         int increment = money * magification * 0.5;
         cha.currentMoney += increment;
         return Result("賣出跌價股，獲得" + to_string(increment) + "的額外收益");
+        
     } else {
         int increment = money * magification * 0.2;
         cha.currentMoney += increment;
@@ -162,11 +160,11 @@ Result Gamble::activate(Stage& stage, Character& cha) const {
         Asset maxAsset;
         for (const auto& a: cha.assets) {
             if(a.second.getValue() > value){
-                value = a.second.roundCnt;
+                value = a.second.getValue();
                 maxAsset = a.second;
             }
         }
-        money = cha.tradeStocks(stage, maxAsset.stock->getName(), maxAsset.number, false);
+        money = cha.tradeStocks(stage, maxAsset.stock->getTicker(), maxAsset.number, false);
     }
     
     // 決定成敗

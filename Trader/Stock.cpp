@@ -69,6 +69,6 @@ int Stock::getPriceLastRound() const
         return current_price;
     }
 
-    // 返回倒數第二個價格
-    return priceHistory[priceHistory.back()];
+    // 返回倒數第1個價格
+    return priceHistory.back();
 }

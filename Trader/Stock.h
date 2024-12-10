@@ -41,7 +41,6 @@ public:
    int getCurrentPrice() const {return current_price;}
    int getPriceLastRound() const;
    double getSensitivity() const {return sensitivity;}
-   string getName() const {return name;}
    string getTicker() const {return ticker;}
     string getIndustry() { return this->industry; }
 

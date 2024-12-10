@@ -54,6 +54,7 @@ void Stage::startStage() {
             playerRanking = distance(sortedCharas.begin(), it) + 1;
         }
 
+        cout << "當前排行：\n";
         for(int i = 0; i < sortedCharas.size(); ++i){
             cout << i + 1 << ": " << sortedCharas[i]->getName() << "  總資產：" << sortedCharas[i]->getTotalAsset() << "\n";
         }
@@ -63,11 +64,8 @@ void Stage::startStage() {
         else
             cout << "按enter進入下回合\n";
         
-        string enter;
-        cin.ignore();
-        getline(cin, enter);
-
-        
+        cin.get();
+        cin.get();
 
         // 更新回合數
         ++currentRound;
@@ -88,6 +86,7 @@ void Stage::startStage() {
 }
 
 void Round::startRound(Stage& stage) {
+    cout << "當前回合數：" << stage.getCurRound() << "，";
     for(auto c = stage.characters.rbegin(); c != stage.characters.rend(); ++c) {
         (*c)->takeAction(stage, *this);
     }

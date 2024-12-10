@@ -36,7 +36,7 @@ Result AssetGrowth::activate(Stage& stage, Character& cha) const {
     }
 
     if(maxRoundCnt >= 7) {
-        int increment = theAsset.getValue() * 0.1;
+        int increment = theAsset.getValue() * 0.16;
         cha.currentMoney += increment;
         return Result("最久的持股為" + theAsset.stock->getTicker() + "，獲得" + to_string(increment) + "的資金");
     } else if(maxRoundCnt >= 3) {
@@ -96,7 +96,7 @@ Result Hedge::activate(Stage& stage, Character& cha) const {
     } else {
         // 找到持股中最有價值資產，賣2/3
         int value = 0;
-        Asset maxAsset;
+        Asset maxAsset(0, stage.stocks["AAPL"]); // 僅表示0價值資產
         for (const auto& a: cha.assets) {
             if(a.second.getValue() > value){
                 value = a.second.getValue();
@@ -110,12 +110,12 @@ Result Hedge::activate(Stage& stage, Character& cha) const {
     // 判斷是否為跌價股
     Stock* theStock = stage.stocks.at(ticker);
     if(theStock->getCurrentPrice() < theStock->getPriceLastRound()){
-        int increment = money * magification * 0.5;
+        int increment = money * magification * 0.05;
         cha.currentMoney += increment;
         return Result("賣出跌價股，獲得" + to_string(increment) + "的額外收益");
         
     } else {
-        int increment = money * magification * 0.2;
+        int increment = money * magification * 0.02;
         cha.currentMoney += increment;
         return Result("賣出增值或等值股，獲得" + to_string(increment) + "的額外收益");
     }
@@ -155,12 +155,11 @@ Result Gamble::activate(Stage& stage, Character& cha) const {
             }
         }
     } else {
-        // 找到最有價值資產，全賣光
-        int value = 0;
-        Asset maxAsset;
+
+        // 電腦操作，找到最有價值資產，全賣光
+        Asset maxAsset(0, stage.stocks.at("AAPL")); // 僅表示0價值資產
         for (const auto& a: cha.assets) {
-            if(a.second.getValue() > value){
-                value = a.second.getValue();
+            if(a.second.getValue() > maxAsset.getValue()){
                 maxAsset = a.second;
             }
         }

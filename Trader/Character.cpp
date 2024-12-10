@@ -13,8 +13,8 @@ const unordered_map<string, int> Character::maxActionCntMap = {
 };
 
 const unordered_map<string, array<int, 2>> Character::initMoneyRangeMap = {
-    {"Retail", {5000, 5500}}, {"Rich", {6000, 6500}}, // Player
-    {"ShortTerm", {5500, 6000}}, {"LongTerm", {6000, 6500}}, {"Defensive", {4000, 4500}}, {"Insider", {6000, 6500}} // Robot
+    {"Retail", {4500, 5000}}, {"Rich", {6000, 6500}}, // Player
+    {"ShortTerm", {5500, 6000}}, {"LongTerm", {6000, 6500}}, {"Defensive", {5000, 5500}}, {"Insider", {6000, 6500}} // Robot
 };
 
 vector<Skill*> Character::skillList = {new Foresight(), new AssetGrowth(), new Hedge(), new InsideScoop(), new Gamble(), new Peek()};
@@ -172,8 +172,7 @@ void Player::takeAction(Stage& stage, const Round& round) {
              << "5: 查看自身資訊\n"
              << "6: 使用技能(消耗操作次數)\n"
              << "7: 交易股票(消耗操作次數)\n"
-             << "8: 查看操作紀錄\n"
-             << "9: 跳過剩餘操作\n";
+             << "8: 跳過剩餘操作\n";
         int command;
         cin >> command;
         switch (command) {
@@ -187,6 +186,7 @@ void Player::takeAction(Stage& stage, const Round& round) {
                 for(auto it = stage.characters.begin() + 1; it != stage.characters.end(); ++it){
                     cout << i << ": " << (*it)->showIntroduction() 
                          << "---------------------\n";
+                    ++i;
                 }
                 break;
             }
@@ -227,7 +227,7 @@ void Player::takeAction(Stage& stage, const Round& round) {
             }
                 
             case 7: {
-                cout << "輸入股票編號與數量及買(1)或賣(0)，中間各空1格\n";
+                cout << "輸入股票代碼與數量及買(1)或賣(0)，中間各空1格\n";
                 string ticker;
                 int number;
                 int boolean;
@@ -244,11 +244,6 @@ void Player::takeAction(Stage& stage, const Round& round) {
             }
 
             case 8: {
-                cout << this->showActionLog();
-                break;
-            }
-
-            case 9: {
                 cout << "是否確定跳過操作? (輸入Y表示確定)\n";
                 char yes;
                 cin >> yes;
@@ -265,7 +260,7 @@ void Player::takeAction(Stage& stage, const Round& round) {
                     --this->actionCnt;
                     cout << "***小傑請你吃了麥當勞***\n";
                 } else {
-                    cerr << "不存在的指令代號：" + to_string(command) + '\n';
+                    cerr << "不存在的指令代號：0123\n";
                 }
                 break;
             }
@@ -299,13 +294,6 @@ ShortTerm::ShortTerm(const string& n, const string& des) : Robot("ShortTerm", n,
 }
 
 void ShortTerm::takeAction(Stage& stage, const Round& round){
-    // 準備檢查持股
-    vector<string> myStocks;
-    myStocks.reserve(this->assets.size());
-    for(const auto& p: this->assets)
-        myStocks.push_back(p.first);
-    int tickerIdx = 0;
-
     int curRound = stage.getCurRound();
     if (curRound == 4 || curRound == 6 || curRound == 7) {
         Result r = this->useSkill(stage, 1);
@@ -319,11 +307,17 @@ void ShortTerm::takeAction(Stage& stage, const Round& round){
                 this->tradeStocks(stage, r.stockTicker, 4, false);
             } catch (runtime_error& e) {}
         }
-
     } else if (curRound == 10){
         if(this->getTotalAsset() <= stage.characters[0]->getTotalAsset() - 200)
             this->useSkill(stage, 1);
     }
+
+    // 準備檢查持股
+    vector<string> myStocks;
+    myStocks.reserve(this->assets.size());
+    for(const auto& p: this->assets)
+        myStocks.push_back(p.first);
+    int tickerIdx = 0;
 
     while(this->actionCnt > 0) {
         if(tickerIdx == myStocks.size()) {
@@ -342,8 +336,9 @@ void ShortTerm::takeAction(Stage& stage, const Round& round){
             }
         } else {
             // 檢查持股
-            Asset& a = this->assets[myStocks[tickerIdx]];
-            if(a.number > 3 && a.stock->getCurrentPrice() > a.stock->getPriceLastRound())
+            Asset a = this->assets.at(myStocks[tickerIdx]);
+
+            if(a.number > 2 && a.stock->getCurrentPrice() > a.stock->getPriceLastRound())
                 this->tradeStocks(stage, myStocks[tickerIdx], a.number, false);
             else if (this->currentMoney > a.stock->getCurrentPrice() * 5){
                 int num = randomInt(3, 5);
@@ -396,7 +391,7 @@ void LongTerm::takeAction(Stage& stage, const Round& round) {
             }
         } else {
             string target = randomStock<Asset>(this->assets);
-            this->tradeStocks(stage, target, this->assets[target].number / 4 + 1, false);
+            this->tradeStocks(stage, target, this->assets.at(target).number / 4 + 1, false);
         }
     }
     // cout << this->name << "行動完畢\n";
@@ -455,7 +450,7 @@ void Defensive::takeAction(Stage& stage, const Round& round) {
             }
         } else {
             string ticker = randomStock<Asset>(this->assets);
-            this->tradeStocks(stage, ticker, this->assets[ticker].number / 3 + 1, false);
+            this->tradeStocks(stage, ticker, this->assets.at(ticker).number / 3 + 1, false);
         }
     }
     // cout << this->name << "行動完畢\n";
@@ -517,24 +512,30 @@ void Insider::takeAction(Stage& stage, const Round& round) {
 
     // 剩下次數的操作
     while(this->actionCnt > 0) {
-        if(this->currentMoney > this->initMoney / 8){
+        if(this->currentMoney > this->initMoney / 10){
             int num = 13;
-            for(const string& ticker: this->industryStock) {
-                while(true){
-                    try {
-                        this->tradeStocks(stage, ticker, num, true);
+            string ticker;
+            if(randomInt(1, 3) < 3){
+                // 買所屬產業股票
+                ticker = this->industryStock[randomInt(0, industryStock.size() - 1)];
+            } else {
+                // 隨機買股
+                ticker = randomStock(stage.stocks);
+            }
+            while(true){
+                try {
+                    this->tradeStocks(stage, ticker, num, true);
+                    break;
+                } catch (runtime_error& e) {
+                    // 資金不足
+                    if(num == 1)
                         break;
-                    } catch (runtime_error& e) {
-                        // 資金不足
-                        if(num == 1)
-                            break;
-                        num /= 2;
-                    }
+                    num /= 2;
                 }
             }
         } else {
             string target = randomStock<Asset>(this->assets);
-            int num = this->assets[target].number / 3 + 1;
+            int num = this->assets.at(target).number / 3 + 1;
             this->tradeStocks(stage, target, num, false);
         }
     }

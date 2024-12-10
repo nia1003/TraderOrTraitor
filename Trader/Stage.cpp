@@ -78,7 +78,7 @@ void Stage::startStage() {
     } else {
         cout << "未能進入前三名，歡迎再次挑戰！\n";
     }
-
+    cin.get();
 // 印股價測試
 // for(auto& p: this->stocks){
 //     p.second->printHistory();

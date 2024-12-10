@@ -42,7 +42,7 @@ class AssetGrowth : public Skill {
 public:
     static int getId() { return 1; }
     string getName() const override { return "資產增值"; }
-    string showInfo() const override { return "持股達到4回合，下次買入獲得8%回饋；達到7回合，獲得持股額度的10%獎勵。\n只會對持股最久的股票發動，且只會發動最高回合數的效果"; }
+    string showInfo() const override { return "持股達到3回合，下次買入獲得8%回饋；達到7回合，獲得持股額度的16%獎勵。\n只會對持股最久的股票發動，且只會發動最高回合數的效果"; }
     Result activate(Stage& stage, Character& cha) const override;
 };
 

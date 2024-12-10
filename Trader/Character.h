@@ -19,7 +19,6 @@ struct Asset {
     int number;
     int roundCnt; // 持有回合數
     Stock* stock;
-    Asset() {}
     Asset(int n, Stock* s) : number(n), stock(s), roundCnt(0) {}
     int getValue() const { return number * stock->getCurrentPrice(); }
 };

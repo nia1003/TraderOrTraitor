@@ -22,6 +22,9 @@ Result Foresight::activate(Stage& stage, Character& cha) const {
 }
 
 Result AssetGrowth::activate(Stage& stage, Character& cha) const {
+    if(cha.assets.empty())
+        throw runtime_error("您未持有任何股票，無法使用" + this->getName());
+
     int maxRoundCnt = 0;
     Asset theAsset(0, stage.stocks["AAPL"]);
 

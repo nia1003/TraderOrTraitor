@@ -32,19 +32,17 @@ protected:
     static const unordered_map<string, array<int, 2>> initMoneyRangeMap;
     static vector<Skill*> skillList;
 
-    // 可能用到的
-    int initMoney; // 隨機後的結果
-    int buyLimit;
-    int sellLimit;
-    string type;
-
     // 身分相關
+    string type;
     string name;
     string description;
 
     // 功能相關
+    int initMoney; // 隨機後的結果
     int currentMoney;
     int actionCnt;
+    int buyLimit;
+    int sellLimit;
     unordered_map<string, Asset> assets;
     vector<string> actionLog; // 本回合操作紀錄
     vector<Skill*> skills;

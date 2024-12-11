@@ -97,7 +97,7 @@ Result Hedge::activate(Stage& stage, Character& cha) const {
             }
         }
     } else {
-        // 找到持股中最有價值資產，賣2/3
+        // 找到持股中最有價值資產，賣全部-1
         int value = 0;
         Asset maxAsset(0, stage.stocks["AAPL"]); // 僅表示0價值資產
         for (const auto& a: cha.assets) {
@@ -107,7 +107,8 @@ Result Hedge::activate(Stage& stage, Character& cha) const {
             }
         }
         ticker = maxAsset.stock->getTicker();
-        money = cha.tradeStocks(stage, ticker, maxAsset.number * 2 / 3 + 1, false);
+        int num = (maxAsset.number == 1) ? 1 : maxAsset.number - 1;
+        money = cha.tradeStocks(stage, ticker, num, false);
     }
 
     // 判斷是否為跌價股

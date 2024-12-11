@@ -50,7 +50,7 @@ class Hedge : public Skill {
 public:
     static int getId() { return 2; }
     string getName() const override { return "風險對沖"; }
-    string showInfo() const override { return "持股在n種不同產業，賣出跌價股時獲得 (n - 1) * 5% 的額外收益(最大15%)；賣出增值或等值股時 (n - 1) * 2% 的額外收益(最大6%)\n無持股時無法使用"; }
+    string showInfo() const override { return "持股在n種不同產業，賣出跌價股時獲得 (n - 1) * 4% 的額外收益(最大15%)；賣出增值或等值股時 (n - 1) * 2% 的額外收益(最大6%)\n無持股時無法使用"; }
     Result activate(Stage& stage, Character& cha) const override;
 };
 

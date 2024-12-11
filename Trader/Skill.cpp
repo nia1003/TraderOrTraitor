@@ -110,7 +110,7 @@ Result Hedge::activate(Stage& stage, Character& cha) const {
     // 判斷是否為跌價股
     Stock* theStock = stage.stocks.at(ticker);
     if(theStock->getCurrentPrice() < theStock->getPriceLastRound()){
-        int increment = money * magification * 0.05;
+        int increment = money * magification * 0.04;
         cha.currentMoney += increment;
         return Result("賣出跌價股，獲得" + to_string(increment) + "的額外收益");
         

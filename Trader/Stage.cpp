@@ -18,6 +18,7 @@ const unordered_map<string, array<int, 11>> Stage::price_per_round =
 
 void Stage::startStage() {
     int playerRanking;
+    vector<Character*> finalRankings;
     for(Round r: rounds) {
         // 發技能給玩家
         switch (this->currentRound)
@@ -57,19 +58,19 @@ void Stage::startStage() {
         }
 
         // 依總資產排序角色，得到結果
-        vector<Character*> sortedCharas(this->characters.begin(), this->characters.end());
-        sort(sortedCharas.begin(), sortedCharas.end(), [](Character* a, Character* b){
+        finalRankings = vector<Character*>(this->characters.begin(), this->characters.end());
+        sort(finalRankings.begin(), finalRankings.end(), [](Character* a, Character* b){
             return a->getTotalAsset() > b->getTotalAsset();
         });
 
         if (currentRound == 10) {
-            auto it = find(sortedCharas.begin(), sortedCharas.end(), this->characters[0]);
-            playerRanking = distance(sortedCharas.begin(), it) + 1;
-        }
-
-        cout << "當前排行：\n";
-        for(int i = 0; i < sortedCharas.size(); ++i){
-            cout << i + 1 << ": " << sortedCharas[i]->getName() << "  總資產：" << sortedCharas[i]->getTotalAsset() << "\n";
+            auto it = find(finalRankings.begin(), finalRankings.end(), this->characters[0]);
+            playerRanking = distance(finalRankings.begin(), it) + 1;
+        } else {
+            cout << "當前排行：\n";
+            for(int i = 0; i < finalRankings.size(); ++i){
+                cout << i + 1 << ": " << finalRankings[i]->getName() << "  總資產：" << finalRankings[i]->getTotalAsset() << "\n";
+            }
         }
 
         if(currentRound == 10)
@@ -85,7 +86,12 @@ void Stage::startStage() {
     }
 
     // 輸出最終排名
-    cout << "最終排名：" << playerRanking << "\n";
+    cout << "最終排行：\n";
+    for(int i = 0; i < finalRankings.size(); ++i){
+        cout << i + 1 << ": " << finalRankings[i]->getName() << "  總資產：" << finalRankings[i]->getTotalAsset() << "\n";
+    }
+
+    cout << "您的排名：" << playerRanking << "\n";
     if(playerRanking <= 3){
         cout << "恭喜獲勝！\n";
     } else {

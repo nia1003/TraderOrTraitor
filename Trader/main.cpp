@@ -312,8 +312,6 @@ int main() {
     cin.get();
     cin.get();
     
-    for(int i = 0; i < 3; ++i)
-        playerCha->obtainSkill(Peek::getId());
     gameCharacters[0] = playerCha;
 
     Stage firstStage(stockMap, rounds);

@@ -44,13 +44,14 @@ Result AssetGrowth::activate(Stage& stage, Character& cha) const {
         return Result("最久的持股為" + theAsset.stock->getTicker() + "，獲得" + to_string(increment) + "的資金");
     } else if(maxRoundCnt >= 3) {
         int num = theAsset.number;
+        int reward;
         while(true){
             if(cha.isPlayer()){
                 cout << "最久的持股： " << theAsset.stock->getTicker() << "\n輸入欲購買數量：";
                 cin >> num;
             }
             try {
-                int reward = cha.tradeStocks(stage, theAsset.stock->getTicker(), num, true) * 0.08;
+                reward = cha.tradeStocks(stage, theAsset.stock->getTicker(), num, true) * 0.08;
                 cha.currentMoney += reward;
                 break;
             } catch (exception& e) {
@@ -64,6 +65,7 @@ Result AssetGrowth::activate(Stage& stage, Character& cha) const {
                 }
             }
         }
+        return Result("，獲得" + to_string(reward) + "的買入回饋");
     } else {
         return Result("沒有持股超過3回合的股票");
     }

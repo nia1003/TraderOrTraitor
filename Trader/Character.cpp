@@ -14,7 +14,7 @@ const unordered_map<string, int> Character::maxActionCntMap = {
 
 const unordered_map<string, array<int, 2>> Character::initMoneyRangeMap = {
     {"Retail", {4500, 5000}}, {"Rich", {6000, 6500}}, // Player
-    {"ShortTerm", {5500, 6000}}, {"LongTerm", {6000, 6500}}, {"Defensive", {5000, 5500}}, {"Insider", {6000, 6500}} // Robot
+    {"ShortTerm", {6000, 6500}}, {"LongTerm", {6500, 7000}}, {"Defensive", {6000, 6500}}, {"Insider", {6500, 7000}} // Robot
 };
 
 vector<Skill*> Character::skillList = {new Foresight(), new AssetGrowth(), new Hedge(), new InsideScoop(), new Gamble(), new Peek()};
@@ -159,6 +159,9 @@ bool Player::getPresentFromLCK = false;
 Player::Player(const string& t, const string& n, const string& des) : Character(t, n, des) {
     this->buyLimit = Player::tradeLimits[0];
     this->sellLimit = Player::tradeLimits[1];
+
+    for(int _ = 0; _ < 3; ++_)
+        this->obtainSkill(Peek::getId());
 }
 
 void Player::takeAction(Stage& stage, const Round& round) {
@@ -257,7 +260,6 @@ void Player::takeAction(Stage& stage, const Round& round) {
                     Player::getPresentFromLCK = true;
                     stage.characters.back()->currentMoney -= 100;
                     this->currentMoney += 100;
-                    --this->actionCnt;
                     cout << "***小傑請你吃了麥當勞***\n";
                 } else {
                     cerr << "不存在的指令代號：0123\n";
@@ -366,12 +368,17 @@ vector<string> LongTerm::preferredStocks = {"AAPL", "MSFT", "COST", "KO", "INTC"
 LongTerm::LongTerm(const string& n, const string& des) : Robot("LongTerm", n, des) {
     for(int _ = 0; _ < 3; ++_)
         this->obtainSkill(AssetGrowth::getId());
+    this->obtainSkill(Gamble::getId());
 }
 
 void LongTerm::takeAction(Stage& stage, const Round& round) {
     int curRound = stage.getCurRound();
-    if (curRound == 5 || curRound == 8 || curRound == 10)
+    if (curRound == 5 || curRound == 8 || curRound == 9)
         this->useSkill(stage, 1);
+    else if (curRound == 10) {
+        if(this->getTotalAsset() <= stage.characters[0]->getTotalAsset() - 200)
+            this->useSkill(stage, 1);
+    }
 
     while(this->actionCnt > 0) {
         if(this->currentMoney > this->initMoney / 10){
@@ -400,6 +407,7 @@ void LongTerm::takeAction(Stage& stage, const Round& round) {
 Defensive::Defensive(const string& n, const string& des) : Robot("Defensive", n, des) {
     for(int _ = 0; _ < 3; ++_)
         this->obtainSkill(Hedge::getId());
+    this->obtainSkill(Gamble::getId());
 }
 
 void Defensive::takeAction(Stage& stage, const Round& round) {
@@ -420,8 +428,11 @@ void Defensive::takeAction(Stage& stage, const Round& round) {
                 }
             }
         }
-    } else if (curRound == 2 || curRound == 4 || curRound == 7) {
+    } else if (curRound == 2 || curRound == 5 || curRound == 7) {
         this->useSkill(stage, 1);
+    } else if (curRound == 10) {
+        if(this->getTotalAsset() <= stage.characters[0]->getTotalAsset() - 200)
+            this->useSkill(stage, 1);
     }
 
     // 找出事件中影響為正的個股

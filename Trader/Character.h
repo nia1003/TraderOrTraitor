@@ -19,7 +19,6 @@ struct Asset {
     int number;
     int roundCnt; // 持有回合數
     Stock* stock;
-    Asset() {}
     Asset(int n, Stock* s) : number(n), stock(s), roundCnt(0) {}
     int getValue() const { return number * stock->getCurrentPrice(); }
 };
@@ -33,19 +32,17 @@ protected:
     static const unordered_map<string, array<int, 2>> initMoneyRangeMap;
     static vector<Skill*> skillList;
 
-    // 可能用到的
-    int initMoney; // 隨機後的結果
-    int buyLimit;
-    int sellLimit;
-    string type;
-
     // 身分相關
+    string type;
     string name;
     string description;
 
     // 功能相關
+    int initMoney; // 隨機後的結果
     int currentMoney;
     int actionCnt;
+    int buyLimit;
+    int sellLimit;
     unordered_map<string, Asset> assets;
     vector<string> actionLog; // 本回合操作紀錄
     vector<Skill*> skills;
@@ -82,6 +79,7 @@ friend class Hedge;
 friend class InsideScoop;
 friend class Gamble;
 friend struct Stage;
+friend class Player;
 };
 
 
@@ -89,6 +87,7 @@ friend struct Stage;
 class Player : public Character {
 protected:
     static const array<short, 2> tradeLimits; // 買入、賣出限制。
+    static bool getPresentFromLCK;
 public:
     Player(const string& t, const string& n, const string& des);
     virtual ~Player() = default;

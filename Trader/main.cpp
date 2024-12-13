@@ -1,4 +1,4 @@
-// 編譯命令：g++ test_round.cpp Character.cpp Stage.cpp Stock.cpp Event.cpp Skill.cpp RandomInt.cpp -o test_round
+// 編譯命令：g++ main.cpp Character.cpp Stage.cpp Stock.cpp Event.cpp Skill.cpp RandomInt.cpp -o main
 
 #include <iostream>
 #include <windows.h>
@@ -277,27 +277,49 @@ int main() {
         rounds.emplace_back(currentRound);
     }
 
+    vector<Character*> gameCharacters = {
+        nullptr,
+        new ShortTerm("金有錢", "敏銳捕捉市場短期波動，快速達成交易決策"), 
+        new ShortTerm("航海王", "勇於冒險，追求高回報，容易忽視潛在的市場風險"), 
+        new LongTerm("巴菲特", "以價值投資聞名，專注於具有長期增長潛力的公司，強調耐心和紀律"),
+        new LongTerm("股癌", "深入研究基本面，強調資產配置和風險管理"),
+        new Defensive("阿土伯", "強調穩健投資，注重選股的產業背景和發展潛力"),
+        new Defensive("瑞．達里歐", "橋水基金創始人，倡導「全天候投資策略」，強調風險平衡和多元化投資"),
+        new Insider("Technology", "偷米", "擁有豐富的人脈資源，能先一步獲取市場資訊，提前佈局"),
+        new Insider("Semiconductor", "郝大膽", "膽識過人，敢於在市場低迷時大量買入"),
+        new Insider("Consumer Staples", "小傑", "能以獨特的視角分析資訊，找到具有高潛力的投資標的。為人慷慨大方，樂於分享"),
+    };
 
-    Character* testPlayer = new Rich("測試用玩家", "我是富爸爸");
-    Character* testShort = new ShortTerm("測試用短線", "喜歡短線投資");
-    Character* testLong = new LongTerm("測試用長線", "喜歡長線投資");
-    Character* testDef = new Defensive("測試用保守", "喜歡保守投資");
-    Character* testIn = new Insider("Technology", "測試用內部", "內部人員");
+    // 遊戲開始，選擇散戶或富二代
+    Character* playerCha;
+    cout << "選擇身分：\n"
+         << "    1. 富二代：單回合操作次數3次，初始資金較多\n"
+         << "    2. 散戶：單回合操作次數5次，初始資金較少\n";
+    int identity;
+    cin >> identity;
+    while(true){
+         if(identity == 1){
+            playerCha = new Rich("富二代(您)", "一個普通的有錢人");
+            break;
+        } else if (identity == 2) {
+            playerCha = new Retail("散戶(您)", "一個普通的韭菜");
+            break;
+        } else {
+            cerr << "錯誤的身分代號：" << identity << "，請重新輸入";
+        }
+    }
+    cout << "按enter開始遊戲\n";
+    cin.get();
+    cin.get();
+    
+    for(int i = 0; i < 3; ++i)
+        playerCha->obtainSkill(Peek::getId());
+    gameCharacters[0] = playerCha;
 
-    for(int i = 0; i < 5; ++i)
-        testPlayer->obtainSkill(i);
-    for(int i = 0; i < 5; ++i)
-        testPlayer->obtainSkill(Peek::getId());
+    Stage firstStage(stockMap, rounds);
+    firstStage.characters = gameCharacters;
 
-    Stage testStage(stockMap, rounds);
-    testStage.characters.push_back(testPlayer);
-    testStage.characters.push_back(testShort);
-    testStage.characters.push_back(testLong);
-    testStage.characters.push_back(testDef);
-    testStage.characters.push_back(testIn);
-
-
-    testStage.startStage();
+    firstStage.startStage();
     
     return 0;
 }
